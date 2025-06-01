@@ -1,0 +1,15 @@
+/* Font fallback styles */
+@font-face {
+  font-family: "CalSans-Fallback";
+  src: local("Arial Black"), local("Arial-Black"), local("sans-serif");
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* Apply font variables */
+:root {
+  --font-inter: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --font-cal-sans:
+    "CalSans-SemiBold", "CalSans-Fallback", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
