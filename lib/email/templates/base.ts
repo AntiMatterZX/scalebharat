@@ -83,4 +83,4 @@ export function baseTemplate(content: string) {
   `
 }
 
-export { baseTemplate }
+export default { baseTemplate }
