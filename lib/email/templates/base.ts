@@ -82,3 +82,5 @@ export function baseTemplate(content: string) {
     </html>
   `
 }
+
+export { baseTemplate }

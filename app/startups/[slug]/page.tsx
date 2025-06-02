@@ -119,13 +119,22 @@ export default async function StartupProfilePage({ params }: { params: { slug: s
 
   // Fetch documents from API endpoint with visibility filtering
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-  const res = await fetch(`${baseUrl}/api/startups/${slug}/documents?visibility=public`, {
-    headers: {
-      cookie: cookies().toString(),
-    },
-  })
-  const json = await res.json()
-  const documents = json.documents || []
+  let documents: StartupDocument[] = []
+  try {
+    const res = await fetch(`${baseUrl}/api/startups/${slug}/documents?visibility=public`, {
+      headers: {
+        cookie: cookies().toString(),
+      },
+    })
+    if (!res.ok) {
+      console.error("Failed to fetch documents, status:", res.status)
+    } else {
+      const json = await res.json()
+      documents = json.documents || []
+    }
+  } catch (error) {
+    console.error("Error fetching documents:", error)
+  }
 
   // Get current user for upvote status
   const {
@@ -305,7 +314,7 @@ export default async function StartupProfilePage({ params }: { params: { slug: s
                   </div>
 
                   {/* Team Members */}
-      {teamMembers && teamMembers.length > 0 && (
+      {teamMembers && Array.isArray(teamMembers) && teamMembers.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {teamMembers.map((member) => (
                         <div
