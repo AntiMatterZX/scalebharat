@@ -13,6 +13,7 @@ import {
   Square,
   ArrowRight
 } from 'lucide-react';
+import type { HTMLMotionProps } from 'framer-motion';
 
 const Features = () => {
   const featureCards = [
@@ -76,19 +77,19 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white px-4 py-12 text-zinc-900">
+    <div className="min-h-screen bg-white dark:bg-gray-950 px-4 py-16 text-zinc-900 dark:text-zinc-100 transition-all duration-300">
       <motion.div
         initial="initial"
         animate="animate"
         transition={{
           staggerChildren: 0.05,
         }}
-        className="mx-auto grid max-w-6xl grid-flow-dense grid-cols-12 gap-4"
+        className="mx-auto grid max-w-6xl grid-flow-dense grid-cols-12 gap-6"
       >
         {/* Header Block */}
         <Block className="col-span-12">
-          <h1 className="mb-2 text-3xl font-medium leading-tight">Postgres Database</h1>
-          <p className="text-zinc-600">
+          <h1 className="mb-2 text-3xl font-extrabold leading-tight text-primary dark:text-emerald-300">Postgres Database</h1>
+          <p className="text-zinc-600 dark:text-zinc-300">
             Every project is a full postgres database, the world's most trusted relational database.
           </p>
         </Block>
@@ -101,10 +102,10 @@ const Features = () => {
         {/* Shipping Tool Block */}
         <Block className="col-span-12 text-center">
           <h3 className="text-lg font-medium mb-2">Shipping Tool</h3>
-          <p className="text-zinc-600 mb-1">
+          <p className="text-zinc-600 dark:text-zinc-300 mb-1">
             Screenshot copied to cloud. Select here to mark up on the webpage.
           </p>
-          <p className="text-zinc-600">
+          <p className="text-zinc-600 dark:text-zinc-300">
             Use one or all. Best of breed products. Integrated as a platform.
           </p>
         </Block>
@@ -113,7 +114,7 @@ const Features = () => {
   );
 };
 
-const Block: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...rest }) => {
+const Block: React.FC<HTMLMotionProps<'div'>> = ({ className, ...rest }) => {
   return (
     <motion.div
       variants={{
@@ -135,7 +136,7 @@ const Block: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...r
         damping: 50,
       }}
       className={twMerge(
-        "rounded-lg border border-zinc-200 bg-white p-6",
+        "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-gray-900 p-8 shadow-md transition-all duration-200",
         className
       )}
       {...rest}
@@ -163,7 +164,7 @@ const FeatureBlock = ({ feature }: { feature: Feature }) => {
         y: -5,
       }}
       className={twMerge(
-        "rounded-lg border border-zinc-200 bg-white p-6 transition-all duration-300",
+        "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-gray-900 p-8 shadow-md hover:shadow-lg transition-all duration-200",
         feature.cols
       )}
       style={{
@@ -171,12 +172,12 @@ const FeatureBlock = ({ feature }: { feature: Feature }) => {
       }}
     >
       <div className="flex items-start gap-4">
-        <div className={`${feature.color} p-3 rounded-lg`}>
+        <div className={`${feature.color} dark:bg-opacity-20 p-3 rounded-lg flex items-center justify-center transition-all duration-200`}>
           {feature.icon}
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-bold mb-1">{feature.title}</h2>
-          <p className="text-zinc-600 mb-3">{feature.description}</p>
+          <h2 className="text-lg font-bold mb-1 text-primary dark:text-emerald-300">{feature.title}</h2>
+          <p className="text-zinc-600 dark:text-zinc-300 mb-3">{feature.description}</p>
           
           {feature.features.map((item, idx) => (
             <div key={idx} className="flex items-center text-sm text-zinc-600 mb-2">

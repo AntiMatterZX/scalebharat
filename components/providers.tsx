@@ -5,6 +5,7 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { User } from "@supabase/supabase-js"
 import { supabase } from "@/lib/supabase"
+import { ThemeProvider } from "@/components/theme-provider"
 
 interface AuthContextType {
   user: User | null
@@ -68,5 +69,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>
+    </ThemeProvider>
+  )
 }

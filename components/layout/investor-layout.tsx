@@ -36,6 +36,7 @@ import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/components/providers"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
+import { Card, CardContent } from '@/components/ui/card'
 
 interface NavItem {
   title: string
@@ -59,9 +60,7 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
 
   useEffect(() => {
     if (user) {
-      loadUserProfile()
-      loadInvestorProfile()
-      loadNotifications()
+      Promise.all([loadUserProfile(), loadInvestorProfile(), loadNotifications()])
     }
   }, [user])
 
@@ -161,9 +160,9 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b border-border">
           <div className="flex items-center justify-between h-16">
             {/* Left section - Logo and Desktop Nav */}
             <div className="flex-1 flex overflow-x-auto scrollbar-hide mx-4">
@@ -352,8 +351,14 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
       </header>
 
       {/* Main content */}
-      <main className="py-6 px-4 sm:px-6 lg:px-8">
-        {children}
+      <main className="flex-1 overflow-auto bg-background">
+        <div className="p-6">
+          <Card>
+            <CardContent className="p-6">
+              {children}
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   )

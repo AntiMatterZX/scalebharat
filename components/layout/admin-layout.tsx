@@ -38,6 +38,7 @@ import { cn } from "@/lib/utils"
 // Add back the import for the client-safe function
 import { getUserRolesClient } from "@/lib/role-management"
 import type { UserRole } from "@/lib/role-management"
+import { Card, CardContent } from '@/components/ui/card'
 
 interface NavItem {
   title: string
@@ -64,8 +65,7 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
   // Update the useEffect to include loadUserRoles again
   useEffect(() => {
     if (user) {
-      loadUserProfile()
-      loadUserRoles()
+      Promise.all([loadUserProfile(), loadUserRoles()])
     }
   }, [user])
 
@@ -293,30 +293,30 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-card dark:bg-card border-r border-border">
           <div className="flex items-center justify-center h-14">
             <Link href={type === "admin" ? "/admin/dashboard" : "/superadmin/dashboard"} className="flex items-center">
               <Shield className="h-8 w-8 text-primary" />
-              <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
+              <span className="ml-2 text-xl font-bold text-foreground">
                 {type === "admin" ? "Admin Panel" : "SuperAdmin"}
               </span>
             </Link>
           </div>
           <div className="mt-6 flex flex-col flex-1">
             <nav className="flex-1 px-2 space-y-1">{renderNavItems(navItems)}</nav>
-            <div className="p-4 mt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="p-4 mt-6 border-t border-border">
               <Link href="/dashboard">
-                <Button variant="outline" className="w-full justify-start text-gray-700 dark:text-gray-300">
+                <Button variant="outline" className="w-full justify-start text-foreground">
                   <Home className="h-5 w-5 mr-2" />
                   Back to App
                 </Button>
               </Link>
               <Button
                 variant="outline"
-                className="w-full justify-start text-gray-700 dark:text-gray-300 mt-2"
+                className="w-full justify-start text-foreground mt-2"
                 onClick={handleSignOut}
               >
                 <LogOut className="h-5 w-5 mr-2" />
@@ -380,12 +380,12 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm z-10">
+        <header className="bg-card shadow-sm z-10 border-b border-border">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center md:hidden">
                 <button
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                   onClick={() => setSidebarOpen(true)}
                 >
                   <Menu className="h-6 w-6" />
@@ -393,7 +393,7 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
               </div>
               <div className="flex-1 flex justify-between px-2 lg:ml-6">
                 <div className="flex items-center">
-                  <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  <h1 className="text-xl font-semibold text-foreground">
                     {type === "admin" ? "Admin Panel" : "SuperAdmin Panel"}
                   </h1>
                 </div>
@@ -440,7 +440,15 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-auto bg-background">
+          <div className="p-6">
+            <Card>
+              <CardContent className="p-6">
+                {children}
+              </CardContent>
+            </Card>
+          </div>
+        </main>
       </div>
     </div>
   )

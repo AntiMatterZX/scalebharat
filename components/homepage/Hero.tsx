@@ -4,19 +4,18 @@ import { Button } from '@/components/ui/button';
 
 const Hero = () => {
   return (
-    <section className="py-20 px-4 bg-black min-h-screen flex items-center">
+    <section className="py-24 px-4 min-h-screen flex items-center bg-gradient-to-br from-blue-50 via-indigo-100 to-emerald-50 dark:from-gray-900 dark:via-gray-950 dark:to-blue-900 transition-all duration-300">
         <div className="container mx-auto text-center">
           {/* ===== MAIN HEADLINE ===== */}
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gray-900 dark:text-white">
             Build in a weekend
             <br />
-            <span className="text-emerald-400">Scale to millions</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-600 dark:from-emerald-300 dark:to-blue-400">Scale to millions</span>
           </h1>
 
           {/* ===== HERO DESCRIPTION ===== */}
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            ConnectVenture is an open source startup-investor platform alternative.
-            <br />
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto">
+            ConnectVenture is an open source startup-investor platform alternative.<br />
             For Real-time connections, Analytics, and AI-powered recommendations.
           </p>
 
@@ -25,7 +24,7 @@ const Hero = () => {
             <Link href="/auth/register?type=startup">
               <Button
                 size="lg"
-                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-600"
               >
                 Register StartUp!
               </Button>
@@ -34,7 +33,7 @@ const Hero = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto border-gray-600 text-gray-800 hover:bg-gray-300"
+                className="w-full sm:w-auto border-gray-300 text-gray-800 hover:bg-gray-200 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
               >
                 Investor
               </Button>

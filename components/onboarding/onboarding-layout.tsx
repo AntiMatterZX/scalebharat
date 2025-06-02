@@ -66,12 +66,12 @@ export function OnboardingLayout({ children, type }: OnboardingLayoutProps) {
   const currentStepIndex = pathname ? steps.findIndex((step) => step.path === pathname) : -1
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <header className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <Building2 className="h-8 w-8 text-primary" />
-            <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">StartupConnect</span>
+            <span className="ml-2 text-xl font-bold text-foreground">StartupConnect</span>
           </Link>
           <Button variant="ghost" size="sm" asChild>
             <Link href="/dashboard">
@@ -85,15 +85,15 @@ export function OnboardingLayout({ children, type }: OnboardingLayoutProps) {
       <div className="container mx-auto px-4 py-8 flex-1">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               {type === "startup" ? "Create Your Startup Profile" : "Create Your Investor Profile"}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-muted-foreground">
               {currentStep?.title || "Complete your profile to get matched"}
             </p>
             <div className="mt-4">
               <Progress value={currentStep?.progress || 0} className="h-2" />
-              <div className="flex justify-between mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex justify-between mt-2 text-sm text-muted-foreground">
                 {steps.map((step, index) => (
                   <div key={index} className="text-center flex-1">
                     <div
@@ -102,7 +102,7 @@ export function OnboardingLayout({ children, type }: OnboardingLayoutProps) {
                           ? "bg-primary"
                           : index < currentStepIndex
                             ? "bg-primary-300" // Completed step
-                            : "bg-gray-300 dark:bg-gray-600" // Future step
+                            : "bg-muted" // Future step
                       }`}
                     />
                     <span className="text-xs hidden sm:block">{step.title}</span>

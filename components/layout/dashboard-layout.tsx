@@ -20,6 +20,7 @@ import {
   Calendar,
 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
+import { Card, CardContent } from '@/components/ui/card'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -154,14 +155,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const navItems = getNavItems()
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-background text-foreground">
       {/* Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col">
-        <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-card border-r border-border">
           <div className="flex items-center flex-shrink-0 px-4 mb-5">
             <Link href="/dashboard" className="flex items-center">
               <Building2 className="h-8 w-8 text-primary mr-2" />
-              <span className="text-xl font-bold">StartupConnect</span>
+              <span className="text-xl font-bold text-foreground">StartupConnect</span>
             </Link>
           </div>
           <div className="flex flex-col flex-grow px-4 mt-5">
@@ -175,12 +176,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     className={cn(
                       "flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors",
                       isActive
-                        ? "bg-primary text-white"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700",
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                     )}
                   >
                     <item.icon
-                      className={cn("h-5 w-5 mr-3", isActive ? "text-white" : "text-gray-500 dark:text-gray-400")}
+                      className={cn("h-5 w-5 mr-3", isActive ? "text-primary-foreground" : "text-muted-foreground")}
                     />
                     {item.name}
                   </Link>
@@ -188,9 +189,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               })}
             </nav>
           </div>
-          <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex-shrink-0 p-4 border-t border-border">
             <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
-              <LogOut className="h-5 w-5 mr-3 text-gray-500 dark:text-gray-400" />
+              <LogOut className="h-5 w-5 mr-3 text-muted-foreground" />
               Sign out
             </Button>
           </div>
@@ -229,9 +230,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
-          <div className="py-6">
-            <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+        <main className="flex-1 overflow-auto bg-background">
+          <div className="p-6">
+            <Card>
+              <CardContent className="p-6">
+                {children}
+              </CardContent>
+            </Card>
           </div>
         </main>
       </div>
