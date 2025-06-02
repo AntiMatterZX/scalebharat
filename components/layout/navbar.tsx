@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -13,12 +15,16 @@ const navigation = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Placeholder for user authentication state
+  const user = null // Replace with actual user state from auth context
 
   return (
     <nav className="border-b bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 justify-between">
-          <div className="flex">
+        <div className="flex h-16 justify-between items-center">
+          <div className="flex items-center">
             <div className="flex flex-shrink-0 items-center">
               <Link href="/" className="text-xl font-bold">
                 StartupConnect
@@ -41,18 +47,82 @@ export function Navbar() {
               ))}
             </div>
           </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="flex space-x-4">
-              <Link href="/auth/login">
-                <Button variant="ghost">Sign in</Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button>Get Started</Button>
-              </Link>
-            </div>
+          <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+            {user ? (
+              <>
+                <span className="text-sm font-medium">Hello, User</span>
+                <Button variant="ghost" onClick={() => {/* Add logout logic */}}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <Button variant="ghost">Sign in</Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button>Get Started</Button>
+                </Link>
+              </>
+            )}
+          </div>
+          <div className="flex items-center sm:hidden">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <span className="sr-only">Open main menu</span>
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
           </div>
         </div>
       </div>
+
+      {mobileMenuOpen && (
+        <div className="sm:hidden border-t border-gray-200 bg-background">
+          <div className="space-y-1 px-2 pt-2 pb-3">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  'block rounded-md px-3 py-2 text-base font-medium',
+                  pathname === item.href
+                    ? 'bg-primary text-white'
+                    : 'text-muted-foreground hover:bg-gray-100 hover:text-gray-900'
+                )}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
+            {user ? (
+              <button
+                className="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-muted-foreground hover:bg-gray-100 hover:text-gray-900"
+                onClick={() => {
+                  /* Add logout logic */
+                  setMobileMenuOpen(false)
+                }}
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full text-left">
+                    Sign in
+                  </Button>
+                </Link>
+                <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full">Get Started</Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   )
-} 
+}

@@ -133,8 +133,12 @@ CREATE TABLE IF NOT EXISTS public.startup_documents (
   file_url TEXT NOT NULL,
   file_size INTEGER,
   is_public BOOLEAN DEFAULT FALSE,
+  visibility TEXT CHECK (visibility IN ('private', 'investors_only', 'public')) DEFAULT 'private',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Create index for document visibility
+CREATE INDEX IF NOT EXISTS idx_startup_documents_visibility ON public.startup_documents(startup_id, visibility);
 
 -- Startup upvotes
 CREATE TABLE IF NOT EXISTS public.startup_upvotes (

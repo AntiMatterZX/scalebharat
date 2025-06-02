@@ -30,9 +30,8 @@ import {
   Linkedin,
   Twitter,
   FileSpreadsheet,
-  FilePresentation,
+  Presentation,
   FileSignature,
-  Presentation
 } from "lucide-react"
 import Link from "next/link"
 import type { Database } from "@/types/database"
@@ -41,7 +40,9 @@ import { Fragment } from "react"
 
 type Startup = Database["public"]["Tables"]["startups"]["Row"]
 type StartupTeamMember = Database["public"]["Tables"]["startup_team_members"]["Row"]
-type StartupDocument = Database["public"]["Tables"]["startup_documents"]["Row"]
+type StartupDocument = Omit<Database["public"]["Tables"]["startup_documents"]["Row"], "document_type"> & {
+  document_type: "pitch_deck" | "financial_model" | "business_plan" | "legal_docs" | "other" | string
+}
 
 export const dynamic = "force-dynamic"
 
@@ -116,8 +117,15 @@ export default async function StartupProfilePage({ params }: { params: { slug: s
   // Fetch team members
   const { data: teamMembers } = await supabase.from("startup_team_members").select("*").eq("startup_id", startup.id)
 
-  // Fetch documents
-  const { data: documents } = await supabase.from("startup_documents").select("*").eq("startup_id", startup.id)
+  // Fetch documents from API endpoint with visibility filtering
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+  const res = await fetch(`${baseUrl}/api/startups/${slug}/documents?visibility=public`, {
+    headers: {
+      cookie: cookies().toString(),
+    },
+  })
+  const json = await res.json()
+  const documents = json.documents || []
 
   // Get current user for upvote status
   const {
@@ -460,7 +468,7 @@ export default async function StartupProfilePage({ params }: { params: { slug: s
                       // File types
                       let fileIcon = <FileText className="text-primary" />
                       if (doc.file_name?.endsWith(".pdf")) fileIcon = <FileText className="text-red-600" />
-                      if (doc.file_name?.endsWith(".ppt") || doc.file_name?.endsWith(".pptx")) fileIcon = <FilePresentation className="text-orange-500" />
+                      if (doc.file_name?.endsWith(".ppt") || doc.file_name?.endsWith(".pptx")) fileIcon = <Presentation className="text-orange-500" />
                       if (doc.file_name?.endsWith(".xls") || doc.file_name?.endsWith(".xlsx") || doc.file_name?.endsWith(".csv")) fileIcon = <FileSpreadsheet className="text-green-600" />
                       if (doc.document_type === "legal_docs") fileIcon = <FileSignature className="text-purple-600" />
                       return (
@@ -475,7 +483,6 @@ export default async function StartupProfilePage({ params }: { params: { slug: s
                           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
                             <span>Uploaded: {new Date(doc.created_at).toLocaleDateString()}</span>
                             {doc.updated_at && <span>Updated: {new Date(doc.updated_at).toLocaleDateString()}</span>}
-                            {doc.file_size !== undefined && doc.file_size !== null && <span>Size: {formatSize(doc.file_size)}</span>}
                           </div>
                           <div className="flex gap-2 mt-1">
                             <Button asChild variant="outline" size="sm">

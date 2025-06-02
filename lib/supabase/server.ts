@@ -1,9 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr"
-import { cookies } from "next/headers"
 import type { Database } from "@/types/database"
 
-export function createSupabaseServerClient(cookieStore?: ReturnType<typeof cookies>) {
-  const currentCookies = cookieStore || cookies()
+export function createSupabaseServerClient(cookieStore?: { get: (name: string) => string | undefined, set?: Function, remove?: Function }) {
+  const currentCookies = cookieStore
 
   // Validate environment variables
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -26,11 +25,11 @@ export function createSupabaseServerClient(cookieStore?: ReturnType<typeof cooki
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
     cookies: {
       get(name: string) {
-        return currentCookies.get(name)?.value
+        return currentCookies?.get(name)
       },
       set(name: string, value: string, options: CookieOptions) {
         try {
-          currentCookies.set({ name, value, ...options })
+          currentCookies?.set?.({ name, value, ...options })
         } catch (error) {
           // The `set` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing
@@ -39,7 +38,7 @@ export function createSupabaseServerClient(cookieStore?: ReturnType<typeof cooki
       },
       remove(name: string, options: CookieOptions) {
         try {
-          currentCookies.set({ name, value: "", ...options })
+          currentCookies?.set?.({ name, value: "", ...options })
         } catch (error) {
           // The `delete` method was called from a Server Component.
           // This can be ignored if you have middleware refreshing

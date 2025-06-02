@@ -147,6 +147,8 @@ export default function StartupDocumentsPage() {
             file_name: newDocument.name,
             file_url: newDocument.url,
             file_path: newDocument.file_path,
+            visibility: "investors_only", // Set default visibility for uploaded documents
+            is_public: false
           })
           .select()
           .single()
@@ -176,6 +178,7 @@ export default function StartupDocumentsPage() {
       const { error: dbError } = await supabase.from("startup_documents").delete().eq("id", docId)
       if (dbError) throw dbError
 
+      // Update local state to remove deleted document without navigation
       setDocuments((prev) => prev.filter((doc) => doc.id !== docId))
       toast({ title: "Document deleted successfully.", variant: "success" })
     } catch (err: any) {
