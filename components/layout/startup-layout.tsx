@@ -90,31 +90,31 @@ export function StartupLayout({ children }: StartupLayoutProps) {
       href: "/startup/matches",
       icon: <TrendingUp className="h-4 w-4" />,
     },
-    {
-      title: "Messages",
-      href: "/startup/messages",
-      icon: <MessageSquare className="h-4 w-4" />,
-    },
+    // {
+    //   title: "Messages",
+    //   href: "/startup/messages",
+    //   icon: <MessageSquare className="h-4 w-4" />,
+    // },
     {
       title: "Meetings",
       href: "/startup/meetings",
       icon: <Calendar className="h-4 w-4" />,
     },
-    {
-      title: "Funding",
-      href: "/startup/funding",
-      icon: <DollarSign className="h-4 w-4" />,
-    },
+    // {
+    //   title: "Funding",
+    //   href: "/startup/funding",
+    //   icon: <DollarSign className="h-4 w-4" />,
+    // },
     {
       title: "Analytics",
       href: "/startup/analytics",
       icon: <BarChart3 className="h-4 w-4" />,
     },
-    {
-      title: "Documents",
-      href: "/startup/documents",
-      icon: <FileText className="h-4 w-4" />,
-    },
+    // {
+    //   title: "Documents",
+    //   href: "/startup/documents",
+    //   icon: <FileText className="h-4 w-4" />,
+    // },
   ]
 
   const settingsItem: NavItem = {

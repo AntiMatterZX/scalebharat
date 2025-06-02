@@ -1,4 +1,4 @@
-import { baseEmailTemplate } from "./base"
+import { baseTemplate } from "./base"
 
 interface StartupApprovedTemplateProps {
   firstName: string
@@ -54,9 +54,5 @@ export function startupApprovedTemplate({
     </p>
   `
 
-  return baseEmailTemplate({
-    title: "Your startup has been approved!",
-    content,
-    footerText: "You're receiving this email because your startup was submitted for approval on StartupConnect.",
-  })
+  return baseTemplate(content)
 }

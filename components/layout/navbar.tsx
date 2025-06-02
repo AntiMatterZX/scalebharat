@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -16,9 +17,30 @@ const navigation = [
 export function Navbar() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const supabase = createClientComponentClient()
 
-  // Placeholder for user authentication state
-  const user = null // Replace with actual user state from auth context
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user || null)
+      
+      const { data: { subscription } } = await supabase.auth.onAuthStateChange(
+        (_event, session) => {
+          setUser(session?.user || null)
+        }
+      )
+      
+      return () => subscription.unsubscribe()
+    }
+    
+    getUser()
+  }, [supabase.auth])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    setMobileMenuOpen(false)
+  }
 
   return (
     <nav className="border-b bg-background">
@@ -50,8 +72,13 @@ export function Navbar() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
             {user ? (
               <>
-                <span className="text-sm font-medium">Hello, User</span>
-                <Button variant="ghost" onClick={() => {/* Add logout logic */}}>
+                <span className="text-sm font-medium">
+                  Hello, {user.user_metadata?.full_name || user.email}
+                </span>
+                <Link href="/dashboard">
+                  <Button variant="outline">Dashboard</Button>
+                </Link>
+                <Button variant="ghost" onClick={handleSignOut}>
                   Logout
                 </Button>
               </>
@@ -99,15 +126,21 @@ export function Navbar() {
               </Link>
             ))}
             {user ? (
-              <button
-                className="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-muted-foreground hover:bg-gray-100 hover:text-gray-900"
-                onClick={() => {
-                  /* Add logout logic */
-                  setMobileMenuOpen(false)
-                }}
-              >
-                Logout
-              </button>
+              <>
+                <Link 
+                  href="/dashboard" 
+                  className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-gray-100 hover:text-gray-900"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  className="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-muted-foreground hover:bg-gray-100 hover:text-gray-900"
+                  onClick={handleSignOut}
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
