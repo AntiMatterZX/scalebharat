@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/components/providers'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -16,29 +17,16 @@ const navigation = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [user, setUser] = useState(null)
-  const supabase = createClientComponentClient()
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user || null)
-      
-      const { data: { subscription } } = await supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setUser(session?.user || null)
-        }
-      )
-      
-      return () => subscription.unsubscribe()
-    }
-    
-    getUser()
-  }, [supabase.auth])
+  const { user } = useAuth()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (!error) {
+      router.push('/auth/login')
+      router.refresh()
+    }
     setMobileMenuOpen(false)
   }
 
@@ -76,7 +64,7 @@ export function Navbar() {
                   Hello, {user.user_metadata?.full_name || user.email}
                 </span>
                 <Link href="/dashboard">
-                  <Button variant="outline">Dashboard</Button>
+                  <Button>Dashboard</Button>
                 </Link>
                 <Button variant="ghost" onClick={handleSignOut}>
                   Logout
@@ -127,12 +115,8 @@ export function Navbar() {
             ))}
             {user ? (
               <>
-                <Link 
-                  href="/dashboard" 
-                  className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-gray-100 hover:text-gray-900"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Dashboard
+                <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full">Dashboard</Button>
                 </Link>
                 <button
                   className="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-muted-foreground hover:bg-gray-100 hover:text-gray-900"
