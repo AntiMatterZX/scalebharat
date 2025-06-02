@@ -65,6 +65,7 @@ export interface Database {
           equity_percentage_offered?: number | null
           planned_use_of_funds?: string[] | null
           fundraising_timeline_months?: number | null
+          banner_image: string | null
         }
         Insert: {
           user_id: string
@@ -92,6 +93,7 @@ export interface Database {
           equity_percentage_offered?: number | null
           planned_use_of_funds?: string[] | null
           fundraising_timeline_months?: number | null
+          banner_image?: string | null
         }
         Update: {
           company_name?: string
@@ -120,6 +122,7 @@ export interface Database {
           equity_percentage_offered?: number | null
           planned_use_of_funds?: string[] | null
           fundraising_timeline_months?: number | null
+          banner_image?: string | null
         }
       }
       investors: {
@@ -145,6 +148,7 @@ export interface Database {
           status: "active" | "inactive" | "suspended"
           created_at: string
           updated_at: string
+          banner_image: string | null
         }
         Insert: {
           user_id: string
@@ -162,6 +166,7 @@ export interface Database {
           business_models?: string[] | null
           linkedin?: string | null
           twitter?: string | null
+          banner_image?: string | null
         }
         Update: {
           slug?: string // Added slug
@@ -180,6 +185,7 @@ export interface Database {
           twitter?: string | null
           status?: "active" | "inactive" | "suspended"
           updated_at?: string
+          banner_image?: string | null
         }
       }
       matches: {

@@ -4,7 +4,12 @@ import { cookies } from "next/headers"
 
 export async function GET(request: NextRequest) {
   try {
-    const cookieStore = cookies()
+    const rawCookieStore = await cookies();
+    const cookieStore = {
+      get: (name: string) => rawCookieStore.get(name)?.value,
+      set: undefined,
+      remove: undefined,
+    };
     const supabase = createSupabaseServerClient(cookieStore)
 
     // Try to get the user from the session
@@ -51,6 +56,7 @@ async function fetchInvestorDashboardData(supabase: any, user: any) {
   // Use service role client for some operations to bypass RLS issues
   const serviceSupabase = createSupabaseServiceRoleClient()
 
+  // Fetch investor profile first (required for investor.id)
   const { data: investor, error: investorError } = await supabase
     .from("investors")
     .select("*")
@@ -62,122 +68,106 @@ async function fetchInvestorDashboardData(supabase: any, user: any) {
     return NextResponse.json({ error: "Investor profile not found for the authenticated user." }, { status: 404 })
   }
 
-  // Fetch match stats using service role
-  const { count: totalMatches, error: totalMatchesError } = await serviceSupabase
-    .from("matches")
-    .select("*", { count: "exact", head: true })
-    .eq("investor_id", investor.id)
+  // Parallelize all stats and meetings queries
+  const [
+    totalMatchesRes,
+    interestedStartupsRes,
+    meetingsScheduledRes,
+    upcomingMeetingsDataRes,
+    wishlistCountRes
+  ] = await Promise.all([
+    serviceSupabase
+      .from("matches")
+      .select("*", { count: "exact", head: true })
+      .eq("investor_id", investor.id),
+    serviceSupabase
+      .from("matches")
+      .select("*", { count: "exact", head: true })
+      .eq("investor_id", investor.id)
+      .eq("status", "interested"),
+    serviceSupabase
+      .from("meetings")
+      .select("*", { count: "exact", head: true })
+      .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
+      .in("status", ["pending", "confirmed"]),
+    serviceSupabase
+      .from("meetings")
+      .select("*, match_id")
+      .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
+      .gte("scheduled_at", new Date().toISOString())
+      .in("status", ["pending", "confirmed"])
+      .order("scheduled_at", { ascending: true })
+      .limit(5),
+    serviceSupabase
+      .from("investor_wishlist")
+      .select("*", { count: "exact", head: true })
+      .eq("investor_id", investor.id)
+  ])
 
-  const { count: interestedStartups, error: interestedError } = await serviceSupabase
-    .from("matches")
-    .select("*", { count: "exact", head: true })
-    .eq("investor_id", investor.id)
-    .eq("status", "interested")
+  const totalMatches: number = totalMatchesRes.count || 0
+  const interestedStartups: number = interestedStartupsRes.count || 0
+  const meetingsScheduled: number = meetingsScheduledRes.count || 0
+  const upcomingMeetingsData: any[] = upcomingMeetingsDataRes.data || []
+  const wishlistCount: number = wishlistCountRes.count || 0
 
-  // Fetch meeting stats using service role
-  const { count: meetingsScheduled, error: meetingsError } = await serviceSupabase
-    .from("meetings")
-    .select("*", { count: "exact", head: true })
-    .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
-    .in("status", ["pending", "confirmed"])
-
-  // Fetch upcoming meetings using service role
-  const { data: upcomingMeetingsData, error: upcomingMeetingsFetchError } = await serviceSupabase
-    .from("meetings")
-    .select("*, match_id")
-    .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
-    .gte("scheduled_at", new Date().toISOString())
-    .in("status", ["pending", "confirmed"])
-    .order("scheduled_at", { ascending: true })
-    .limit(5)
-
-  // Process meetings to get startup names if needed
-  let processedMeetings = []
+  // Process meetings to get startup names if needed (parallelize match/startup fetches)
+  let processedMeetings: Array<{ id: string; startup: string; date: string; status: string }> = []
   if (upcomingMeetingsData && upcomingMeetingsData.length > 0) {
-    // Get match IDs from meetings
-    const matchIds = upcomingMeetingsData.map((meeting) => meeting.match_id).filter(Boolean)
-
-    // Get startup information for these matches using service role
+    const matchIds = upcomingMeetingsData.map((meeting: any) => meeting.match_id).filter(Boolean)
     if (matchIds.length > 0) {
-      const { data: matchesData, error: matchesError } = await serviceSupabase
+      // Fetch matches first
+      const matchesDataRes = await serviceSupabase
         .from("matches")
         .select("id, startup_id")
         .in("id", matchIds)
-
-      if (!matchesError && matchesData) {
-        // Create a map of match_id to startup_id
-        const matchToStartupMap = matchesData.reduce((acc, match) => {
-          acc[match.id] = match.startup_id
+      const matchesData: Array<{ id: string; startup_id: string }> = matchesDataRes.data || []
+      const matchToStartupMap: Record<string, string> = matchesData.reduce((acc, match) => {
+        acc[match.id] = match.startup_id
+        return acc
+      }, {} as Record<string, string>)
+      const startupIds: string[] = matchesData.map((match) => match.startup_id).filter(Boolean)
+      let startupNameMap: Record<string, string> = {}
+      if (startupIds.length > 0) {
+        const startupsDataRes = await serviceSupabase
+          .from("startups")
+          .select("id, company_name")
+          .in("id", startupIds)
+        const startupsData: Array<{ id: string; company_name: string }> = startupsDataRes.data || []
+        startupNameMap = startupsData.reduce((acc, startup) => {
+          acc[startup.id] = startup.company_name
           return acc
-        }, {})
-
-        // Get startup names
-        const startupIds = matchesData.map((match) => match.startup_id).filter(Boolean)
-        if (startupIds.length > 0) {
-          const { data: startupsData, error: startupsError } = await serviceSupabase
-            .from("startups")
-            .select("id, company_name")
-            .in("id", startupIds)
-
-          if (!startupsError && startupsData) {
-            // Create a map of startup_id to company_name
-            const startupNameMap = startupsData.reduce((acc, startup) => {
-              acc[startup.id] = startup.company_name
-              return acc
-            }, {})
-
-            // Process meetings with startup names
-            processedMeetings = upcomingMeetingsData.map((meeting) => {
-              const matchId = meeting.match_id
-              const startupId = matchToStartupMap[matchId]
-              const startupName = startupNameMap[startupId] || "Startup"
-
-              return {
-                id: meeting.id,
-                startup: startupName,
-                date: meeting.scheduled_at,
-                status: meeting.status,
-              }
-            })
-          }
-        }
+        }, {} as Record<string, string>)
       }
+      processedMeetings = upcomingMeetingsData.map((meeting: any) => {
+        const matchId = meeting.match_id
+        const startupId = matchToStartupMap[matchId]
+        const startupName = startupNameMap[startupId] || "Startup"
+        return {
+          id: meeting.id,
+          startup: startupName,
+          date: meeting.scheduled_at,
+          status: meeting.status,
+        }
+      })
     }
   }
-
-  // If we couldn't get startup names, just return basic meeting info
   if (processedMeetings.length === 0 && upcomingMeetingsData) {
-    processedMeetings = upcomingMeetingsData.map((meeting) => ({
+    processedMeetings = upcomingMeetingsData.map((meeting: any) => ({
       id: meeting.id,
-      startup: "Startup", // Default name if we couldn't get the actual name
+      startup: "Startup",
       date: meeting.scheduled_at,
       status: meeting.status,
     }))
   }
 
-  if (totalMatchesError || interestedError || meetingsError || upcomingMeetingsFetchError) {
-    console.error("API Investor Dashboard - Error fetching stats:", {
-      totalMatchesError,
-      interestedError,
-      meetingsError,
-      upcomingMeetingsFetchError,
-    })
-  }
-
-  // Get wishlist count using service role
-  const { count: wishlistCount, error: wishlistError } = await serviceSupabase
-    .from("investor_wishlist")
-    .select("*", { count: "exact", head: true })
-    .eq("investor_id", investor.id)
-
   const dashboardData = {
     investorData: investor,
     stats: {
       profileViews: investor.views || 0,
-      totalMatches: totalMatches || 0,
-      interestedStartups: interestedStartups || 0,
-      meetingsScheduled: meetingsScheduled || 0,
-      wishlistCount: wishlistCount || 0,
+      totalMatches,
+      interestedStartups,
+      meetingsScheduled,
+      wishlistCount,
     },
     upcomingMeetings: processedMeetings,
     recentActivity: [],

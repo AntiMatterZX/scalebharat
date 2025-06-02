@@ -8,12 +8,14 @@ import { useAuth } from "@/components/providers"
 import { supabase } from "@/lib/supabase"
 import { useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { cn } from "@/lib/utils"
 
 export default function OnboardingPage() {
   const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [selectedType, setSelectedType] = useState<"startup" | "investor" | null>(null)
 
   const handleProfileSelection = async (type: "startup" | "investor") => {
     if (!user) {
@@ -98,8 +100,13 @@ export default function OnboardingPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           <Card
-            className="hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => !loading && handleProfileSelection("startup")}
+            className={cn(
+              "hover:shadow-lg transition-shadow cursor-pointer border-2",
+              selectedType === "startup"
+                ? "border-blue-600 bg-blue-50/60"
+                : "border-transparent bg-white/10"
+            )}
+            onClick={() => setSelectedType("startup")}
           >
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
@@ -111,15 +118,27 @@ export default function OnboardingPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" disabled={loading}>
-                {loading ? "Creating Profile..." : "Continue as Startup"}
+              <Button
+                className="w-full"
+                disabled={loading || selectedType !== "startup"}
+                onClick={() => handleProfileSelection("startup")}
+                variant={selectedType === "startup" ? "default" : "outline"}
+              >
+                {loading && selectedType === "startup"
+                  ? "Creating Profile..."
+                  : "Continue as Startup"}
               </Button>
             </CardContent>
           </Card>
 
           <Card
-            className="hover:shadow-lg transition-shadow cursor-pointer"
-            onClick={() => !loading && handleProfileSelection("investor")}
+            className={cn(
+              "hover:shadow-lg transition-shadow cursor-pointer border-2",
+              selectedType === "investor"
+                ? "border-green-600 bg-green-50/60"
+                : "border-transparent bg-white/10"
+            )}
+            onClick={() => setSelectedType("investor")}
           >
             <CardHeader className="text-center">
               <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -129,8 +148,15 @@ export default function OnboardingPage() {
               <CardDescription>Create an investor profile to discover and invest in promising startups</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" variant="secondary" disabled={loading}>
-                {loading ? "Creating Profile..." : "Continue as Investor"}
+              <Button
+                className="w-full"
+                variant={selectedType === "investor" ? "default" : "outline"}
+                disabled={loading || selectedType !== "investor"}
+                onClick={() => handleProfileSelection("investor")}
+              >
+                {loading && selectedType === "investor"
+                  ? "Creating Profile..."
+                  : "Continue as Investor"}
               </Button>
             </CardContent>
           </Card>

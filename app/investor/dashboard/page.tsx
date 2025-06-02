@@ -12,6 +12,10 @@ import { Badge } from "@/components/ui/badge"
 import type { Database } from "@/types/database"
 import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useForm } from 'react-hook-form'
 
 type InvestorProfile = Database["public"]["Tables"]["investors"]["Row"]
 type InvestorDashboardData = {
@@ -34,6 +38,10 @@ export default function InvestorDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<any>(null)
+  const [profileLoading, setProfileLoading] = useState(false)
+  const [profileError, setProfileError] = useState<string | null>(null)
+  const [profileSuccess, setProfileSuccess] = useState<string | null>(null)
+  const { register, handleSubmit, setValue, reset, watch } = useForm({})
 
   useEffect(() => {
     const initializePage = async () => {
@@ -98,6 +106,49 @@ export default function InvestorDashboardPage() {
     initializePage()
   }, [toast, router])
 
+  // Fetch profile for the form
+  useEffect(() => {
+    if (!dashboardData?.investorData) return
+    reset({
+      ...dashboardData.investorData,
+      investment_industries: (dashboardData.investorData.investment_industries || []).join(", "),
+      investment_stages: (dashboardData.investorData.investment_stages || []).join(", "),
+      investment_geographies: (dashboardData.investorData.investment_geographies || []).join(", "),
+      business_models: (dashboardData.investorData.business_models || []).join(", ")
+    })
+  }, [dashboardData, reset])
+
+  const onProfileSubmit = async (data: any) => {
+    setProfileLoading(true)
+    setProfileError(null)
+    setProfileSuccess(null)
+    try {
+      // Convert comma-separated fields to arrays
+      const payload = {
+        ...data,
+        investment_industries: data.investment_industries.split(',').map((s: string) => s.trim()).filter(Boolean),
+        investment_stages: data.investment_stages.split(',').map((s: string) => s.trim()).filter(Boolean),
+        investment_geographies: data.investment_geographies.split(',').map((s: string) => s.trim()).filter(Boolean),
+        business_models: data.business_models.split(',').map((s: string) => s.trim()).filter(Boolean),
+      }
+      const res = await fetch('/api/investors', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || 'Failed to update profile')
+      }
+      setProfileSuccess('Profile updated successfully!')
+      setTimeout(() => setProfileSuccess(null), 2000)
+    } catch (err: any) {
+      setProfileError(err.message || 'Failed to update profile')
+    } finally {
+      setProfileLoading(false)
+    }
+  }
+
   const getStatusBadge = (status: InvestorProfile["status"] | undefined) => {
     if (!status) return null
     switch (status) {
@@ -105,13 +156,6 @@ export default function InvestorDashboardPage() {
         return (
           <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
             Active
-          </Badge>
-        )
-      case "pending":
-        return (
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-            <Clock className="mr-1 h-3 w-3" />
-            Pending
           </Badge>
         )
       case "inactive":
@@ -169,23 +213,10 @@ export default function InvestorDashboardPage() {
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold">{investorData.firm_name || "Your Dashboard"}</h1>
-          <p className="text-muted-foreground">{investorData.tagline || "Welcome to your investor dashboard"}</p>
+          <p className="text-muted-foreground">Welcome to your investor dashboard</p>
         </div>
         <div className="flex flex-col items-start sm:items-end gap-2">{getStatusBadge(investorData.status)}</div>
       </div>
-
-      {investorData.status === "pending" && (
-        <Alert className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950">
-          <Clock className="h-4 w-4" />
-          <AlertDescription>
-            Your profile is currently pending approval. Some features may be limited until approved. You can still{" "}
-            <Link href="/investor/profile" className="font-semibold underline">
-              edit your profile
-            </Link>
-            .
-          </AlertDescription>
-        </Alert>
-      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         <Card>
@@ -251,8 +282,8 @@ export default function InvestorDashboardPage() {
               <div>
                 <h3 className="font-medium mb-2">Industries</h3>
                 <div className="flex flex-wrap gap-2">
-                  {investorData.industries && investorData.industries.length > 0 ? (
-                    investorData.industries.map((industry: string, index: number) => (
+                  {investorData.investment_industries && investorData.investment_industries.length > 0 ? (
+                    investorData.investment_industries.map((industry: string, index: number) => (
                       <Badge key={index} variant="secondary">
                         {industry}
                       </Badge>
@@ -279,8 +310,8 @@ export default function InvestorDashboardPage() {
               <div>
                 <h3 className="font-medium mb-2">Investment Range</h3>
                 <p>
-                  {investorData.min_investment && investorData.max_investment
-                    ? `$${investorData.min_investment.toLocaleString()} - $${investorData.max_investment.toLocaleString()}`
+                  {investorData.check_size_min && investorData.check_size_max
+                    ? `$${investorData.check_size_min.toLocaleString()} - $${investorData.check_size_max.toLocaleString()}`
                     : "Not specified"}
                 </p>
               </div>
@@ -336,6 +367,7 @@ export default function InvestorDashboardPage() {
           <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           <TabsTrigger value="matches">Matches</TabsTrigger>
           <TabsTrigger value="messages">Messages</TabsTrigger>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
         <TabsContent value="activity">
           <Card>
@@ -416,6 +448,122 @@ export default function InvestorDashboardPage() {
                   </Button>
                 </Link>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="profile">
+          <Card>
+            <CardHeader>
+              <CardTitle>Edit Investor Profile</CardTitle>
+              <CardDescription>Update your investor information below.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Banner Image Preview */}
+              {watch('banner_image') && (
+                <div className="mb-4">
+                  <div className="w-full h-40 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                    <img
+                      src={watch('banner_image')}
+                      alt="Banner Preview"
+                      className="object-cover w-full h-full"
+                      style={{ maxHeight: 180 }}
+                    />
+                  </div>
+                </div>
+              )}
+              <form onSubmit={handleSubmit(onProfileSubmit)} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block mb-1 font-medium">Firm Name</label>
+                    <Input {...register('firm_name')} placeholder="Firm Name" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Investor Type</label>
+                    <Select {...register('type')} value={watch('type') || ''} onValueChange={v => setValue('type', v)}>
+                      <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="angel">Angel</SelectItem>
+                        <SelectItem value="vc">VC</SelectItem>
+                        <SelectItem value="corporate">Corporate</SelectItem>
+                        <SelectItem value="government">Government</SelectItem>
+                        <SelectItem value="accelerator">Accelerator</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block mb-1 font-medium">Bio / Description</label>
+                    <Textarea {...register('bio')} placeholder="Description" rows={3} />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Check Size Min</label>
+                    <Input type="number" step="0.01" {...register('check_size_min')} placeholder="Minimum Check Size" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Check Size Max</label>
+                    <Input type="number" step="0.01" {...register('check_size_max')} placeholder="Maximum Check Size" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Industries (comma separated)</label>
+                    <Input {...register('investment_industries')} placeholder="e.g. technology, healthcare" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Stages (comma separated)</label>
+                    <Input {...register('investment_stages')} placeholder="e.g. seed, series-a" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Geographies (comma separated)</label>
+                    <Input {...register('investment_geographies')} placeholder="e.g. US, Europe" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Business Models (comma separated)</label>
+                    <Input {...register('business_models')} placeholder="e.g. B2B, B2C" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">AUM (USD)</label>
+                    <Input type="number" step="0.01" {...register('aum')} placeholder="Assets Under Management" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Fund Size (USD)</label>
+                    <Input type="number" step="0.01" {...register('fund_size')} placeholder="Fund Size" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Logo URL</label>
+                    <Input {...register('logo')} placeholder="Logo URL" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Website</label>
+                    <Input {...register('website')} placeholder="Website" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">LinkedIn</label>
+                    <Input {...register('linkedin')} placeholder="LinkedIn URL" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Twitter</label>
+                    <Input {...register('twitter')} placeholder="Twitter URL" />
+                  </div>
+                  <div>
+                    <label className="block mb-1 font-medium">Status</label>
+                    <Select {...register('status')} value={watch('status') || ''} onValueChange={v => setValue('status', v)}>
+                      <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="suspended">Suspended</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block mb-1 font-medium">Banner Image URL</label>
+                    <Input {...register('banner_image')} placeholder="Banner Image URL (e.g. from Unsplash or your uploads)" />
+                  </div>
+                </div>
+                {profileError && <div className="text-destructive text-sm">{profileError}</div>}
+                {profileSuccess && <div className="text-green-600 text-sm">{profileSuccess}</div>}
+                <Button type="submit" disabled={profileLoading} className="mt-4">
+                  {profileLoading ? 'Saving...' : 'Save Profile'}
+                </Button>
+              </form>
             </CardContent>
           </Card>
         </TabsContent>

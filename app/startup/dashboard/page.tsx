@@ -25,6 +25,9 @@ import { Badge } from "@/components/ui/badge"
 import type { Database } from "@/types/database"
 import { useToast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
+import { FileUpload } from "@/components/ui/file-upload"
+import { useForm } from "react-hook-form"
+import { Input } from "@/components/ui/input"
 
 type StartupProfile = Database["public"]["Tables"]["startups"]["Row"]
 type StartupDashboardData = {
@@ -51,6 +54,7 @@ export default function StartupDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<any>(null)
+  const { register, watch, setValue } = useForm()
 
   useEffect(() => {
     const initializePage = async () => {
@@ -454,6 +458,28 @@ export default function StartupDashboardPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Banner Image Preview */}
+      {watch('banner_image') && (
+        <div className="mb-4">
+          <div className="w-full h-40 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+            <img
+              src={watch('banner_image')}
+              alt="Banner Preview"
+              className="object-cover w-full h-full"
+              style={{ maxHeight: 180 }}
+            />
+          </div>
+        </div>
+      )}
+      <FileUpload
+        onUpload={(url) => setValue('banner_image', url)}
+        accept="image/*"
+        bucket="public-banners"
+        path={`startup-banners/${user?.id}`}
+        label="Upload Banner Image"
+      />
+      <Input {...register('banner_image')} placeholder="Banner Image URL (or upload above)" />
     </div>
   )
 }

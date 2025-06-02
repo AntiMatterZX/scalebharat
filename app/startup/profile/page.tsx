@@ -144,6 +144,16 @@ export default function StartupProfilePage() {
         </Button>
       </div>
 
+      {startupProfile.banner_image && (
+        <div className="w-full h-48 md:h-64 rounded-lg overflow-hidden mb-6">
+          <img
+            src={startupProfile.banner_image}
+            alt="Banner"
+            className="object-cover w-full h-full"
+          />
+        </div>
+      )}
+
       <Card>
         <CardHeader className="flex flex-row justify-between items-center">
           <div>
