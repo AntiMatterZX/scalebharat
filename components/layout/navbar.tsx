@@ -4,17 +4,44 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { FiMenu, FiArrowRight } from "react-icons/fi";
+import { FiMenu, FiArrowRight, FiX } from "react-icons/fi";
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/providers';
+import { useUserProfile } from '@/lib/hooks/useUserProfile';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { 
+  Home, 
+  Building2, 
+  Users, 
+  TrendingUp, 
+  Calendar, 
+  MessageSquare, 
+  Settings, 
+  Search, 
+  BarChart3, 
+  Heart, 
+  Briefcase,
+  PieChart,
+  UserCheck,
+  MailIcon
+} from 'lucide-react';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
+  const { type: userType, isLoading: profileLoading } = useUserProfile();
 
   // Close mobile nav on route change
   useEffect(() => {
@@ -46,35 +73,217 @@ export function Navbar() {
     setIsOpen(false);
   };
 
+  // Get dynamic navigation items based on user type
+  const getNavigationItems = () => {
+    if (!user || profileLoading) return [];
+
+    const commonItems = [
+      {
+        name: "Settings",
+        href: "/settings",
+        icon: Settings,
+        description: "Account settings"
+      }
+    ];
+
+    if (userType === "startup") {
+      return [
+        {
+          name: "Startup Dashboard",
+          href: "/startup/dashboard",
+          icon: Home,
+          description: "Your startup dashboard"
+        },
+        {
+          name: "My Startup",
+          href: "/startup/profile",
+          icon: Building2,
+          description: "Company profile"
+        },
+        {
+          name: "Browse Investors",
+          href: "/startup/investors",
+          icon: Users,
+          description: "Find investors"
+        },
+        {
+          name: "Matches",
+          href: "/startup/matches",
+          icon: TrendingUp,
+          description: "Investor matches"
+        },
+        {
+          name: "Messages",
+          href: "/startup/messages",
+          icon: MessageSquare,
+          description: "Chat with investors"
+        },
+        {
+          name: "Meetings",
+          href: "/startup/meetings",
+          icon: Calendar,
+          description: "Scheduled meetings"
+        },
+        {
+          name: "Analytics",
+          href: "/startup/analytics",
+          icon: BarChart3,
+          description: "Performance metrics"
+        },
+        ...commonItems
+      ];
+    } else if (userType === "investor") {
+      return [
+        {
+          name: "Investor Dashboard",
+          href: "/investor/dashboard",
+          icon: Home,
+          description: "Your investor dashboard"
+        },
+        {
+          name: "My Profile",
+          href: "/investor/profile",
+          icon: UserCheck,
+          description: "Investor profile"
+        },
+        {
+          name: "Browse Startups",
+          href: "/investor/startups",
+          icon: Search,
+          description: "Discover startups"
+        },
+        {
+          name: "Matches",
+          href: "/investor/matches",
+          icon: TrendingUp,
+          description: "Startup matches"
+        },
+        {
+          name: "Messages",
+          href: "/investor/messages",
+          icon: MessageSquare,
+          description: "Chat with startups"
+        },
+        {
+          name: "Wishlist",
+          href: "/investor/wishlist",
+          icon: Heart,
+          description: "Saved startups"
+        },
+        {
+          name: "Portfolio",
+          href: "/investor/portfolio",
+          icon: Briefcase,
+          description: "Investment portfolio"
+        },
+        {
+          name: "Meetings",
+          href: "/investor/meetings",
+          icon: Calendar,
+          description: "Scheduled meetings"
+        },
+        {
+          name: "Analytics",
+          href: "/investor/analytics",
+          icon: PieChart,
+          description: "Investment analytics"
+        },
+        ...commonItems
+      ];
+    } else if (userType === "admin") {
+      return [
+        {
+          name: "Admin Dashboard",
+          href: "/admin/dashboard",
+          icon: Home,
+          description: "Admin dashboard"
+        },
+        {
+          name: "Users",
+          href: "/admin/users",
+          icon: Users,
+          description: "Manage users"
+        },
+        {
+          name: "Startups",
+          href: "/admin/startups",
+          icon: Building2,
+          description: "Manage startups"
+        },
+        {
+          name: "Investors",
+          href: "/admin/investors",
+          icon: TrendingUp,
+          description: "Manage investors"
+        },
+        {
+          name: "Analytics",
+          href: "/admin/analytics",
+          icon: BarChart3,
+          description: "Platform analytics"
+        },
+        {
+          name: "Messages",
+          href: "/admin/messages",
+          icon: MailIcon,
+          description: "System messages"
+        },
+        ...commonItems
+      ];
+    }
+
+    return commonItems;
+  };
+
   return (
-    <nav className="bg-white p-4 border-b-[1px] border-gray-200 flex items-center justify-between relative sticky top-0 z-40">
-      <NavLeft setIsOpen={setIsOpen} pathname={pathname} />
-      <NavRight user={user} handleSignOut={handleSignOut} />
-      <NavMenu isOpen={isOpen} user={user} handleSignOut={handleSignOut} pathname={pathname} />
+    <nav className="bg-background border-b border-border relative sticky top-0 z-[100] transition-colors duration-300">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          <NavLeft setIsOpen={setIsOpen} pathname={pathname} userType={userType} />
+          <NavRight 
+            user={user} 
+            userType={userType}
+            profileLoading={profileLoading}
+            navigationItems={getNavigationItems()}
+            handleSignOut={handleSignOut} 
+          />
+        </div>
+      </div>
+      <NavMenu 
+        isOpen={isOpen} 
+        user={user} 
+        userType={userType}
+        profileLoading={profileLoading}
+        navigationItems={getNavigationItems()}
+        handleSignOut={handleSignOut} 
+        pathname={pathname} 
+        setIsOpen={setIsOpen} 
+      />
     </nav>
   );
 }
 
 const Logo = () => {
   return (
-    <Link href="/" className="block">
+    <Link href="/" className="flex items-center gap-2">
       <svg
-        width="50"
-        height="39"
+        width="32"
+        height="24"
         viewBox="0 0 50 39"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="fill-gray-800"
+        className="fill-foreground transition-colors duration-300"
       >
         <path
           d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"
-          stopColor="#000000"
+          stopColor="currentColor"
         ></path>
         <path
           d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"
-          stopColor="#000000"
+          stopColor="currentColor"
         ></path>
       </svg>
+      <span className="font-semibold text-lg text-foreground hidden sm:block">StartupConnect</span>
     </Link>
   );
 };
@@ -82,23 +291,42 @@ const Logo = () => {
 interface NavLeftProps {
   setIsOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   pathname: string;
+  userType: string | null;
 }
 
-const NavLeft = ({ setIsOpen, pathname }: NavLeftProps) => {
+const NavLeft = ({ setIsOpen, pathname, userType }: NavLeftProps) => {
+  // Desktop navigation shows public routes for everyone
+  const getPublicNavItems = () => {
+    return [
+      { text: "Home", href: "/" },
+      { text: "Startups", href: "/startups" },
+      { text: "Investors", href: "/investors" },
+    ];
+  };
+
+  const navItems = getPublicNavItems();
+
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-4 flex-1">
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="block lg:hidden text-gray-950 text-2xl"
+        className="block lg:hidden text-foreground text-2xl transition-colors duration-300"
         onClick={() => setIsOpen((pv) => !pv)}
       >
         <FiMenu />
       </motion.button>
       <Logo />
-      <NavLink text="Home" href="/" pathname={pathname} />
-      <NavLink text="Startups" href="/startups" pathname={pathname} />
-      <NavLink text="Investors" href="/investors" pathname={pathname} />
+      <div className="hidden lg:flex items-center gap-6 overflow-x-auto">
+        {navItems.map((item) => (
+          <NavLink 
+            key={item.href} 
+            text={item.text} 
+            href={item.href} 
+            pathname={pathname} 
+          />
+        ))}
+      </div>
     </div>
   );
 };
@@ -115,13 +343,13 @@ const NavLink = ({ text, href, pathname }: NavLinkProps) => {
   return (
     <Link
       href={href}
-      className="hidden lg:block h-[30px] overflow-hidden font-medium"
+      className="h-[30px] overflow-hidden font-medium"
     >
       <motion.div whileHover={{ y: -30 }}>
-        <span className={`flex items-center h-[30px] ${isActive ? 'text-indigo-600' : 'text-gray-500'}`}>
+        <span className={`flex items-center h-[30px] transition-colors duration-300 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
           {text}
         </span>
-        <span className="flex items-center h-[30px] text-indigo-600">
+        <span className="flex items-center h-[30px] text-primary">
           {text}
         </span>
       </motion.div>
@@ -131,62 +359,107 @@ const NavLink = ({ text, href, pathname }: NavLinkProps) => {
 
 interface NavRightProps {
   user: any;
+  userType: string | null;
+  profileLoading: boolean;
+  navigationItems: any[];
   handleSignOut: () => void;
 }
 
-const NavRight = ({ user, handleSignOut }: NavRightProps) => {
-  if (user) {
-    return (
-      <div className="flex items-center gap-4">
-        <Link href="/dashboard">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="hidden sm:block px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium rounded-md whitespace-nowrap"
-          >
-            Dashboard
-          </motion.button>
-        </Link>
-        <div className="hidden sm:flex items-center gap-2">
-          <Avatar className="h-8 w-8 border-2 border-indigo-600">
-            <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
-            <AvatarFallback className="bg-indigo-600 text-white text-sm">
-              {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
-            </AvatarFallback>
-          </Avatar>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleSignOut}
-            className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent font-medium rounded-md whitespace-nowrap"
-          >
-            Logout
-          </motion.button>
-        </div>
-      </div>
-    );
-  }
-
+const NavRight = ({ user, userType, profileLoading, navigationItems, handleSignOut }: NavRightProps) => {
   return (
-    <div className="flex items-center gap-4">
-      <Link href="/auth/login">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent font-medium rounded-md whitespace-nowrap"
-        >
-          Sign in
-        </motion.button>
-      </Link>
-      <Link href="/auth/register">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium rounded-md whitespace-nowrap"
-        >
-          Sign up
-        </motion.button>
-      </Link>
+    <div className="flex items-center gap-3">
+      {/* Theme Toggle */}
+      <ThemeToggle variant="ghost" size="sm" />
+      
+      {/* Auth Section */}
+      {user ? (
+        <div className="hidden lg:flex items-center gap-3">
+          {/* Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center space-x-3 h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-accent">
+                <Avatar className="h-7 w-7 border border-border">
+                  <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                    {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-medium text-foreground">
+                    {user.user_metadata?.full_name || 'User'}
+                  </span>
+                  {userType && !profileLoading && (
+                    <span className="text-xs text-muted-foreground capitalize">
+                      {userType}
+                    </span>
+                  )}
+                </div>
+                <FiMenu className="h-3 w-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-72 mt-1" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex items-center space-y-1">
+                  <Avatar className="h-10 w-10 mr-3 border border-border">
+                    <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                      {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {user.user_metadata?.full_name || 'User'}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                    {userType && !profileLoading && (
+                      <p className="text-xs leading-none text-primary font-medium capitalize">
+                        {userType}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              
+              {/* Dynamic Navigation Items */}
+              {navigationItems.map((item) => (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href} className="flex items-center">
+                    <item.icon className="mr-3 h-4 w-4" />
+                    <div className="flex flex-col">
+                      <span className="text-sm">{item.name}</span>
+                      {item.description && (
+                        <span className="text-xs text-muted-foreground">{item.description}</span>
+                      )}
+                    </div>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+              
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut}>
+                <FiArrowRight className="mr-3 h-4 w-4 rotate-180" />
+                <span>Sign out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ) : (
+        <div className="hidden lg:flex items-center gap-3">
+          <Link href="/auth/login">
+            <Button variant="outline" size="sm" className="border-border text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+              Sign in
+            </Button>
+          </Link>
+          <Link href="/auth/register">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              Sign up
+            </Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
@@ -194,102 +467,231 @@ const NavRight = ({ user, handleSignOut }: NavRightProps) => {
 interface NavMenuProps {
   isOpen: boolean;
   user: any;
+  userType: string | null;
+  profileLoading: boolean;
+  navigationItems: any[];
   handleSignOut: () => void;
   pathname: string;
+  setIsOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 }
 
-const NavMenu = ({ isOpen, user, handleSignOut, pathname }: NavMenuProps) => {
+const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, handleSignOut, pathname, setIsOpen }: NavMenuProps) => {
+  // Public routes that everyone can see
+  const publicRoutes = [
+    { text: "Home", href: "/" },
+    { text: "Startups", href: "/startups" },
+    { text: "Investors", href: "/investors" },
+  ];
+
+  if (!isOpen) return null;
+
   return (
-    <motion.div
-      variants={menuVariants}
-      initial="closed"
-      animate={isOpen ? "open" : "closed"}
-      className="absolute p-4 bg-white shadow-lg left-0 right-0 top-full origin-top flex flex-col gap-4"
-    >
-      <MenuLink text="Home" href="/" pathname={pathname} />
-      <MenuLink text="Startups" href="/startups" pathname={pathname} />
-      <MenuLink text="Investors" href="/investors" pathname={pathname} />
+    <>
+      {/* Backdrop overlay */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] lg:hidden"
+        onClick={() => setIsOpen(false)}
+      />
       
-      {/* Mobile Auth Section */}
-      <div className="pt-4 border-t border-gray-200 space-y-3">
-        {user ? (
-          <>
-            <div className="flex items-center gap-3 mb-4">
-              <Avatar className="h-10 w-10 border-2 border-indigo-600">
+      {/* Mobile menu drawer */}
+      <motion.div
+        initial={{ y: "100%", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: "100%", opacity: 0 }}
+        transition={{ 
+          type: "spring", 
+          damping: 25, 
+          stiffness: 300,
+          mass: 0.8 
+        }}
+        className="fixed top-16 left-0 right-0 bg-background border-b border-border shadow-xl z-[9999] lg:hidden max-h-[calc(100vh-4rem)] overflow-y-auto"
+      >
+        {/* Menu Header with Close Button */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+          className="flex items-center justify-between p-4 border-b border-border bg-accent/30"
+        >
+          <div className="flex items-center gap-2">
+            <svg
+              width="24"
+              height="18"
+              viewBox="0 0 50 39"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="fill-foreground"
+            >
+              <path
+                d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"
+                stopColor="currentColor"
+              ></path>
+              <path
+                d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"
+                stopColor="currentColor"
+              ></path>
+            </svg>
+            <span className="font-semibold text-lg text-foreground">Menu</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsOpen(false)}
+            className="h-8 w-8 p-0 hover:bg-accent"
+          >
+            <FiX className="h-5 w-5" />
+            <span className="sr-only">Close menu</span>
+          </Button>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+          className="p-4 space-y-6"
+        >
+          {/* Public Navigation - Always visible */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.3 }}
+          >
+            <h3 className="text-sm font-medium text-muted-foreground mb-3 px-2">Navigation</h3>
+            <div className="space-y-2">
+              {publicRoutes.map((route, index) => (
+                <motion.div
+                  key={route.href}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + (index * 0.05), duration: 0.3 }}
+                >
+                  <Link href={route.href} onClick={() => setIsOpen(false)}>
+                    <div 
+                      className={`w-full p-3 rounded-md border transition-colors ${
+                        route.href === pathname 
+                          ? "bg-primary text-primary-foreground border-primary" 
+                          : "bg-background hover:bg-accent border-border"
+                      }`}
+                    >
+                      <span className="text-sm font-medium">{route.text}</span>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Mobile Profile Section */}
+          {user && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+              className="flex items-center gap-3 p-3 bg-accent/50 rounded-lg"
+            >
+              <Avatar className="h-10 w-10 border-2 border-primary">
                 <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
-                <AvatarFallback className="bg-indigo-600 text-white">
+                <AvatarFallback className="bg-primary text-primary-foreground">
                   {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {user.user_metadata?.full_name || 'User'}
                 </p>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-muted-foreground truncate">
                   {user.email}
                 </p>
+                {userType && !profileLoading && (
+                  <p className="text-xs text-primary font-medium capitalize">
+                    {userType}
+                  </p>
+                )}
               </div>
-            </div>
-            <Link href="/dashboard">
-              <Button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium rounded-md">
-                Dashboard
-              </Button>
-            </Link>
-            <Button 
-              variant="outline" 
-              onClick={handleSignOut} 
-              className="w-full border-gray-300 text-gray-700 hover:bg-gray-50"
+            </motion.div>
+          )}
+          
+          {/* Auth-based Navigation - Only for authenticated users */}
+          {user && navigationItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45, duration: 0.3 }}
             >
-              Logout
-            </Button>
-          </>
-        ) : (
-          <>
-            <Link href="/auth/login">
-              <Button variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50">
-                Sign in
-              </Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium rounded-md">
-                Sign up
-              </Button>
-            </Link>
-          </>
-        )}
-      </div>
-    </motion.div>
-  );
-};
-
-interface MenuLinkProps {
-  text: string;
-  href: string;
-  pathname: string;
-}
-
-const MenuLink = ({ text, href, pathname }: MenuLinkProps) => {
-  const isActive = pathname === href;
-  
-  return (
-    <motion.div variants={menuLinkVariants}>
-      <Link
-        href={href}
-        className="h-[30px] overflow-hidden font-medium text-lg flex items-start gap-2"
-      >
-        <motion.span variants={menuLinkArrowVariants}>
-          <FiArrowRight className="h-[30px] text-gray-950" />
-        </motion.span>
-        <motion.div whileHover={{ y: -30 }}>
-          <span className={`flex items-center h-[30px] ${isActive ? 'text-indigo-600' : 'text-gray-500'}`}>
-            {text}
-          </span>
-          <span className="flex items-center h-[30px] text-indigo-600">
-            {text}
-          </span>
+              <h3 className="text-sm font-medium text-muted-foreground mb-3 px-2">My Dashboard</h3>
+              <div className="space-y-2">
+                {navigationItems.slice(0, 6).map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + (index * 0.05), duration: 0.3 }}
+                  >
+                    <Link href={item.href} onClick={() => setIsOpen(false)}>
+                      <div 
+                        className={`w-full p-3 rounded-md border transition-colors flex items-center gap-3 ${
+                          item.href === pathname 
+                            ? "bg-primary text-primary-foreground border-primary" 
+                            : "bg-background hover:bg-accent border-border"
+                        }`}
+                      >
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium">{item.name}</div>
+                          {item.description && (
+                            <div className="text-xs opacity-70">{item.description}</div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+          
+          {/* Mobile Actions */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.3 }}
+            className="border-t border-border pt-4"
+          >
+            {user ? (
+              <div 
+                onClick={handleSignOut}
+                className="w-full p-3 rounded-md border border-border bg-background hover:bg-accent transition-colors flex items-center gap-3 cursor-pointer"
+              >
+                <FiArrowRight className="h-4 w-4 flex-shrink-0 rotate-180" />
+                <div>
+                  <div className="text-sm font-medium">Sign out</div>
+                  <div className="text-xs text-muted-foreground">Log out of your account</div>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                  <div className="w-full p-3 rounded-md border border-border bg-background hover:bg-accent transition-colors">
+                    <div className="text-sm font-medium">Sign in</div>
+                    <div className="text-xs text-muted-foreground">Access your account</div>
+                  </div>
+                </Link>
+                <Link href="/auth/register" onClick={() => setIsOpen(false)}>
+                  <div className="w-full p-3 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                    <div className="text-sm font-medium">Sign up</div>
+                    <div className="text-xs opacity-70">Create a new account</div>
+                  </div>
+                </Link>
+              </div>
+            )}
+          </motion.div>
         </motion.div>
-      </Link>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 

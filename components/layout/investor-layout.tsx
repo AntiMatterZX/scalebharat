@@ -21,6 +21,7 @@ import {
   Heart,
   ChevronDown,
   ArrowRight,
+  TrendingUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -33,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useAuth } from "@/components/providers"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
@@ -52,30 +54,23 @@ interface InvestorLayoutProps {
 export function InvestorLayout({ children }: InvestorLayoutProps) {
   const { user } = useAuth()
   const pathname = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [userProfile, setUserProfile] = useState<any>(null)
   const [investorProfile, setInvestorProfile] = useState<any>(null)
-  const [unreadMessages, setUnreadMessages] = useState(0)
   const [pendingMatches, setPendingMatches] = useState(0)
+  const [unreadMessages, setUnreadMessages] = useState(0)
 
   useEffect(() => {
     if (user) {
-      Promise.all([loadUserProfile(), loadInvestorProfile(), loadNotifications()])
+      Promise.all([loadInvestorProfile(), loadNotifications()])
     }
   }, [user])
 
-  const loadUserProfile = async () => {
-    try {
-      const { data } = await supabase.from("users").select("*").eq("id", user!.id).single()
-      setUserProfile(data)
-    } catch (error) {
-      console.error("Error loading user profile:", error)
-    }
-  }
-
   const loadInvestorProfile = async () => {
     try {
-      const { data } = await supabase.from("investors").select("*").eq("user_id", user!.id).single()
+      const { data } = await supabase
+        .from("investors")
+        .select("*, users(first_name, last_name, profile_picture)")
+        .eq("user_id", user!.id)
+        .single()
       setInvestorProfile(data)
     } catch (error) {
       console.error("Error loading investor profile:", error)
@@ -84,25 +79,9 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
 
   const loadNotifications = async () => {
     try {
-      // Load unread messages count
-      const { count: messagesCount } = await supabase
-        .from("messages")
-        .select("*", { count: "exact", head: true })
-        .eq("receiver_id", user!.id)
-        .eq("is_read", false)
-
-      setUnreadMessages(messagesCount || 0)
-
-      // Load pending matches count
-      if (investorProfile) {
-        const { count: matchesCount } = await supabase
-          .from("matches")
-          .select("*", { count: "exact", head: true })
-          .eq("investor_id", investorProfile.id)
-          .eq("status", "pending")
-
-        setPendingMatches(matchesCount || 0)
-      }
+      // Placeholder for loading notifications
+      setPendingMatches(0)
+      setUnreadMessages(0)
     } catch (error) {
       console.error("Error loading notifications:", error)
     }
@@ -160,137 +139,88 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b border-border">
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border transition-colors duration-300">
+        <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between h-16">
-            {/* Left section - Logo and Desktop Nav */}
-            <div className="flex-1 flex overflow-x-auto scrollbar-hide mx-4">
+            {/* Left: Logo */}
+            <Link href="/investor/dashboard" className="flex items-center gap-2">
+              <TrendingUp className="h-6 w-6 text-primary" />
+              <span className="font-semibold text-lg text-foreground hidden sm:block">StartupConnect</span>
+            </Link>
+
+            {/* Right: Profile and Actions */}
+            <div className="flex items-center gap-3">
+              <ThemeToggle variant="ghost" size="sm" />
               
-              {/* Desktop Navigation */}
-              <nav className="flex space-x-1 px-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    className={cn(
-                      "inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors group",
-                      pathname === item.href
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    )}
-                  >
-                    {item.icon}
-                    <span className="ml-2">{item.title}</span>
-                    {item.badge && item.badge > 0 && (
-                      <span className="ml-2 inline-flex items-center justify-center h-5 w-5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
-                        {item.badge}
-                      </span>
-                    )}
-                    <ArrowRight className="ml-1 h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            {/* Right section - Settings, Notifications and Profile */}
-            <div className="flex items-center space-x-4">
               {/* Notifications */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    <Bell className="h-5 w-5" />
-                    {(unreadMessages > 0 || pendingMatches > 0) && (
-                      <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-600"></span>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-80">
-                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {unreadMessages > 0 && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/investor/messages" className="w-full">
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        <span>You have {unreadMessages} unread messages</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  {pendingMatches > 0 && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/investor/matches" className="w-full">
-                        <UsersIcon className="mr-2 h-4 w-4" />
-                        <span>You have {pendingMatches} pending matches</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  {unreadMessages === 0 && pendingMatches === 0 && (
-                    <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-                      No new notifications
-                    </div>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Settings Link - Desktop */}
-              <Link
-                href={settingsItem.href}
-                className={cn(
-                  "hidden md:inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                  pathname === settingsItem.href
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="h-5 w-5" />
+                {(pendingMatches + unreadMessages) > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
                 )}
-              >
-                <Settings className="h-4 w-4" />
-              </Link>
+              </Button>
               
               {/* Profile Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={userProfile?.profile_picture || "/placeholder.svg"}
-                        alt={userProfile?.first_name}
+                  <Button variant="ghost" className="flex items-center space-x-2 h-9 px-3">
+                    <Avatar className="h-7 w-7 border border-border">
+                      <AvatarImage 
+                        src={investorProfile?.users?.profile_picture || user?.user_metadata?.profile_picture} 
+                        alt={`${investorProfile?.users?.first_name} ${investorProfile?.users?.last_name}` || user?.email} 
                       />
-                      <AvatarFallback>
-                        {userProfile?.first_name?.[0]}
-                        {userProfile?.last_name?.[0]}
+                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                        {investorProfile?.users?.first_name?.[0] || user?.user_metadata?.full_name?.[0] || user?.email?.[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden md:inline-flex items-center">
-                      <span className="ml-2 text-sm font-medium">
-                        {userProfile?.first_name}
+                    <div className="hidden md:flex flex-col items-start">
+                      <span className="text-sm font-medium text-foreground">
+                        {investorProfile?.users ? 
+                          `${investorProfile.users.first_name} ${investorProfile.users.last_name}` : 
+                          user?.user_metadata?.full_name || 'User'
+                        }
                       </span>
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    </span>
+                      <span className="text-xs text-muted-foreground">
+                        {investorProfile?.firm_name || 'Investor'}
+                      </span>
+                    </div>
+                    <ChevronDown className="h-3 w-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-64" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {userProfile?.first_name} {userProfile?.last_name}
+                        {investorProfile?.users ? 
+                          `${investorProfile.users.first_name} ${investorProfile.users.last_name}` : 
+                          user?.user_metadata?.full_name || 'User'
+                        }
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {investorProfile?.firm_name || "Investor"}
+                        {user?.email}
+                      </p>
+                      <p className="text-xs leading-none text-primary font-medium">
+                        {investorProfile?.firm_name || 'Investor'}
                       </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  
                   <DropdownMenuItem asChild>
-                    <Link href="/investor/profile">
+                    <Link href="/investor/profile" className="flex items-center">
                       <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                      <span>My Profile</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/investor/settings">
+                    <Link href="/investor/settings" className="flex items-center">
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -298,66 +228,60 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              {/* Mobile menu button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
             </div>
           </div>
+        </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="pt-2 pb-3 space-y-1 px-4 border-t">
-              {[...navItems, settingsItem].map((item) => (
+        {/* Enhanced Navigation Tabs */}
+        <div className="border-b border-border">
+          <div className="px-4 sm:px-6">
+            <nav className="flex space-x-1 overflow-x-auto scrollbar-hide">
+              {navItems.map((item) => (
                 <Link
                   key={item.title}
                   href={item.href}
                   className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                    "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
                     pathname === item.href
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      ? "text-foreground border-primary bg-accent/50"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
                   )}
-                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  {item.icon}
-                  <span className="ml-3">{item.title}</span>
+                  <span className="flex-shrink-0">{item.icon}</span>
+                  <span className="text-sm">{item.title}</span>
                   {item.badge && item.badge > 0 && (
-                    <span className="ml-auto inline-flex items-center justify-center h-5 w-5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
+                    <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
                       {item.badge}
                     </span>
                   )}
                 </Link>
               ))}
-              
-              <Button
-                variant="ghost"
-                className="w-full justify-start mt-2 text-muted-foreground"
-                onClick={handleSignOut}
+              {/* Settings Tab */}
+              <Link
+                href={settingsItem.href}
+                className={cn(
+                  "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
+                  pathname === settingsItem.href
+                    ? "text-foreground border-primary bg-accent/50"
+                    : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
+                )}
               >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
+                <span className="flex-shrink-0">{settingsItem.icon}</span>
+                <span className="text-sm">{settingsItem.title}</span>
+              </Link>
+            </nav>
           </div>
-        )}
+        </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto bg-background">
-        <div className="p-6">
-          <Card>
-            <CardContent className="p-6">
+      {/* Main Content */}
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden transition-colors duration-300">
+            <div className="p-6 sm:p-8">
               {children}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </main>
     </div>

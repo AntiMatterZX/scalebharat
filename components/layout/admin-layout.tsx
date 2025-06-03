@@ -21,6 +21,7 @@ import {
   Home,
   ChevronDown,
   ChevronRight,
+  Bell,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -39,6 +40,7 @@ import { cn } from "@/lib/utils"
 import { getUserRolesClient } from "@/lib/role-management"
 import type { UserRole } from "@/lib/role-management"
 import { Card, CardContent } from '@/components/ui/card'
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 interface NavItem {
   title: string
@@ -397,39 +399,50 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
                     {type === "admin" ? "Admin Panel" : "SuperAdmin Panel"}
                   </h1>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center space-x-4">
+                  {/* Theme Toggle */}
+                  <ThemeToggle variant="ghost" size="sm" />
+                  
+                  {/* Notifications */}
+                  <Button variant="ghost" size="sm" className="relative">
+                    <Bell className="h-5 w-5" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
+                  </Button>
+                  
+                  {/* Profile */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center max-w-xs text-sm rounded-full focus:outline-none">
+                      <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={userProfile?.profile_picture || "/placeholder.svg"}
-                            alt={userProfile?.first_name}
-                          />
-                          <AvatarFallback>
-                            {userProfile?.first_name?.[0]}
-                            {userProfile?.last_name?.[0]}
+                          <AvatarImage src="/placeholder.svg" />
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                            {type === "admin" ? "A" : "SA"}
                           </AvatarFallback>
                         </Avatar>
-                      </button>
+                      </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>
-                        {userProfile?.first_name} {userProfile?.last_name}
+                    <DropdownMenuContent className="w-56" align="end">
+                      <DropdownMenuLabel className="font-normal">
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            {type === "admin" ? "Admin User" : "SuperAdmin"}
+                          </p>
+                          <p className="text-xs leading-none text-muted-foreground">
+                            admin@example.com
+                          </p>
+                        </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
+                      <DropdownMenuItem asChild>
+                        <Link href="/dashboard" className="flex items-center">
+                          <Home className="mr-2 h-4 w-4" />
+                          <span>Back to App</span>
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleSignOut}>
                         <LogOut className="mr-2 h-4 w-4" />
-                        <span>Sign out</span>
+                        <span>Sign Out</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

@@ -394,10 +394,10 @@ const BentoBlock = ({ className, children, whileHover, ...rest }: any) => {
   );
 };
 
-// 3D Hover Card Component - Mobile Optimized
+// 3D Hover Card Component - Full Animation Version
 const ThreeDHoverCard = () => {
   return (
-    <div className="cursor-pointer h-full">
+    <motion.div whileHover="hovered" className="cursor-pointer h-full">
       <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-6 lg:gap-8 h-full">
         <div className="flex-1 w-full min-w-0">
           <ScreenMock />
@@ -406,7 +406,7 @@ const ThreeDHoverCard = () => {
           <CardCopy />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -426,12 +426,12 @@ const ScreenMock = () => {
       transition={{
         duration: 0.35,
       }}
-      className="w-full h-60 sm:h-80 rounded-xl sm:rounded-2xl p-2 sm:p-4 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900"
+      className="w-full h-60 sm:h-80 rounded-xl sm:rounded-2xl p-2 sm:p-4 bg-gradient-to-br from-violet-300 to-indigo-300 dark:from-violet-800 dark:to-indigo-800"
     >
       {/* Browser Screen */}
       <div
         style={{ transform: "translateZ(80px)", transformStyle: "preserve-3d" }}
-        className="w-full h-full bg-gray-900 rounded-lg sm:rounded-xl shadow-lg p-1 sm:p-2 relative"
+        className="w-full h-full bg-slate-900 rounded-lg sm:rounded-xl shadow-lg p-1 sm:p-2 relative"
       >
         {/* Browser Buttons */}
         <div className="flex gap-1 mt-1 relative">
@@ -444,27 +444,27 @@ const ScreenMock = () => {
           style={{
             transformStyle: "preserve-3d",
           }}
-          className="p-1 sm:p-2 rounded-md absolute top-6 sm:top-8 bottom-1 sm:bottom-2 left-1 sm:left-2 right-1 sm:right-2 bg-gray-800 grid gap-2 sm:gap-4 grid-cols-6 grid-rows-6"
+          className="p-1 sm:p-2 rounded-md absolute top-6 sm:top-8 bottom-1 sm:bottom-2 left-1 sm:left-2 right-1 sm:right-2 bg-slate-800 grid gap-2 sm:gap-4 grid-cols-6 grid-rows-6"
         >
           <div
             style={{ transform: "translateZ(40px)" }}
-            className="rounded-md sm:rounded-lg w-full col-span-6 row-span-1 bg-gray-700"
+            className="rounded-md sm:rounded-lg w-full col-span-6 row-span-1 bg-slate-700"
           />
           <div
             style={{ transform: "translateZ(20px)" }}
-            className="rounded-md sm:rounded-lg w-full col-span-1 row-span-5 bg-gray-700"
+            className="rounded-md sm:rounded-lg w-full col-span-1 row-span-5 bg-slate-700"
           />
           <div
             style={{ transform: "translateZ(80px)" }}
-            className="rounded-md sm:rounded-lg w-full col-span-3 row-span-5 bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center"
+            className="rounded-md sm:rounded-lg w-full col-span-3 row-span-5 bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center"
           >
-            <Building2 className="text-2xl sm:text-4xl lg:text-6xl text-white" />
+            <FiGitPullRequest className="text-2xl sm:text-4xl lg:text-7xl text-white" />
           </div>
           <div
             style={{ transform: "translateZ(120px)" }}
-            className="rounded-md sm:rounded-lg w-full col-span-2 row-span-5 bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center"
+            className="rounded-md sm:rounded-lg w-full col-span-2 row-span-5 bg-gradient-to-br from-amber-600 to-red-600 flex items-center justify-center"
           >
-            <DollarSign className="text-2xl sm:text-4xl lg:text-6xl text-white" />
+            <FiArrowUpRight className="text-2xl sm:text-4xl lg:text-7xl text-white" />
           </div>
         </div>
       </div>
@@ -475,18 +475,46 @@ const ScreenMock = () => {
 const CardCopy = () => {
   return (
     <div className="flex items-center justify-center lg:justify-start w-full h-full">
-      <div className="hidden lg:block mr-3 sm:mr-4">
+      <motion.div
+        variants={{
+          hovered: {
+            x: 0,
+            opacity: 1,
+          },
+        }}
+        style={{
+          x: -40,
+          opacity: 0,
+        }}
+        transition={{
+          duration: 0.35,
+        }}
+        className="hidden lg:block mr-3 sm:mr-4"
+      >
         <FiArrowRight className="text-xl sm:text-2xl text-primary" />
-      </div>
-      <div className="text-center lg:text-left w-full">
+      </motion.div>
+      <motion.div
+        variants={{
+          hovered: {
+            x: 0,
+          },
+        }}
+        style={{
+          x: -40,
+        }}
+        transition={{
+          duration: 0.35,
+        }}
+        className="text-center lg:text-left w-full"
+      >
         <h4 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-2 leading-tight">
-          Connect Startups with Investors
+          Increase developer productivity
         </h4>
         <p className="text-muted-foreground text-xs sm:text-sm lg:text-sm xl:text-base leading-relaxed">
-          Our platform bridges the gap between innovative startups and strategic investors,
-          creating meaningful partnerships that drive growth and success.
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet
+          debitis nam cumque? Our platform streamlines the connection process.
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

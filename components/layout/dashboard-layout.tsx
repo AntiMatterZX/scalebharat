@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { Card, CardContent } from '@/components/ui/card'
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -201,23 +202,29 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top navigation */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm z-10">
+        <header className="bg-background border-b border-border shadow-sm z-10 transition-colors duration-300">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center md:hidden">
                 <Link href="/dashboard" className="flex items-center">
                   <Building2 className="h-8 w-8 text-primary mr-2" />
-                  <span className="text-xl font-bold">StartupConnect</span>
+                  <span className="text-xl font-bold text-foreground">StartupConnect</span>
                 </Link>
               </div>
-              <div className="flex items-center">
-                <Button variant="ghost" size="icon" className="mr-2 relative">
+              <div className="flex items-center space-x-4 ml-auto">
+                {/* Theme Toggle */}
+                <ThemeToggle variant="ghost" size="sm" />
+                
+                {/* Notifications */}
+                <Button variant="ghost" size="sm" className="relative">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
                 </Button>
+                
+                {/* Profile */}
                 <div className="ml-3 relative">
                   <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
+                    <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                       <span className="text-sm font-medium">
                         {userType === "startup" ? "S" : userType === "investor" ? "I" : "A"}
                       </span>
@@ -230,9 +237,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-background">
+        <main className="flex-1 overflow-auto bg-background transition-colors duration-300">
           <div className="p-6">
-            <Card>
+            <Card className="bg-card border-border transition-colors duration-300">
               <CardContent className="p-6">
                 {children}
               </CardContent>

@@ -25,6 +25,9 @@ export const useAuth = () => {
   return context
 }
 
+// Re-export useTheme from next-themes for convenience
+export { useTheme } from "next-themes"
+
 export function Providers({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
@@ -70,8 +73,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>
+    <ThemeProvider 
+      attribute="class" 
+      defaultTheme="system" 
+      enableSystem 
+      disableTransitionOnChange={false}
+    >
+      <AuthContext.Provider value={{ user, loading }}>
+        {children}
+      </AuthContext.Provider>
     </ThemeProvider>
   )
 }

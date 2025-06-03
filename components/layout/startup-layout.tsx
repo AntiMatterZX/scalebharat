@@ -8,20 +8,17 @@ import {
   Building2,
   Users,
   BarChart3,
-  MessageSquare,
   Settings,
   LogOut,
   Menu,
-  X,
   TrendingUp,
   Calendar,
   Home,
-  FileText,
-  DollarSign,
   Rocket,
+  Bell,
+  ArrowRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,10 +27,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { useAuth } from "@/components/providers"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
-import { Card, CardContent } from '@/components/ui/card'
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 interface NavItem {
   title: string
@@ -91,38 +89,17 @@ export function StartupLayout({ children }: StartupLayoutProps) {
       href: "/startup/matches",
       icon: <TrendingUp className="h-4 w-4" />,
     },
-    // {
-    //   title: "Messages",
-    //   href: "/startup/messages",
-    //   icon: <MessageSquare className="h-4 w-4" />,
-    // },
     {
       title: "Meetings",
       href: "/startup/meetings",
       icon: <Calendar className="h-4 w-4" />,
     },
-    // {
-    //   title: "Funding",
-    //   href: "/startup/funding",
-    //   icon: <DollarSign className="h-4 w-4" />,
-    // },
     {
       title: "Analytics",
       href: "/startup/analytics",
       icon: <BarChart3 className="h-4 w-4" />,
     },
-    // {
-    //   title: "Documents",
-    //   href: "/startup/documents",
-    //   icon: <FileText className="h-4 w-4" />,
-    // },
   ]
-
-  const settingsItem: NavItem = {
-    title: "Settings",
-    href: "/startup/settings",
-    icon: <Settings className="h-4 w-4" />,
-  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -130,109 +107,60 @@ export function StartupLayout({ children }: StartupLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60 border-b border-border">
-          <div className="flex items-center justify-between h-16">
-            {/* Horizontal Scrollable Navigation */}
-            <div className="flex-1 flex overflow-x-auto scrollbar-hide mx-4">
-              <nav className="flex space-x-1 px-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.title}
-                    href={item.href}
-                    className={cn(
-                      "inline-flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors whitespace-nowrap",
-                      pathname === item.href
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    )}
-                  >
-                    {item.title}
-                    {item.badge && (
-                      <span className="ml-2 inline-flex items-center justify-center h-5 w-5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            {/* Right section - Settings and Profile */}
-            <div className="flex items-center space-x-4">
-              {/* Settings Link */}
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* Top Header - Theme Aware */}
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md transition-colors duration-300">
+        
+        {/* Enhanced Navigation Tabs */}
+        <div className="border-b border-border">
+          <div className="px-4 sm:px-6">
+            <nav className="flex space-x-1 overflow-x-auto scrollbar-hide">
+              {navItems.map((item) => (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
+                    pathname === item.href
+                      ? "text-foreground border-primary bg-accent/50"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
+                  )}
+                >
+                  <span className="flex-shrink-0">{item.icon}</span>
+                  <span className="text-sm">{item.title}</span>
+                  {item.badge && (
+                    <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              ))}
+              {/* Settings Tab */}
               <Link
-                href={settingsItem.href}
+                href="/startup/settings"
                 className={cn(
-                  "inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
-                  pathname === settingsItem.href
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
+                  pathname === "/startup/settings"
+                    ? "text-foreground border-primary bg-accent/50"
+                    : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
                 )}
               >
-                <Settings className="h-4 w-4" />
+                <span className="flex-shrink-0"><Settings className="h-4 w-4" /></span>
+                <span className="text-sm">Settings</span>
               </Link>
-              
-              {/* Profile Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage
-                        src={startupProfile?.users?.profile_picture || "/placeholder.svg"}
-                        alt={startupProfile?.users?.first_name}
-                      />
-                      <AvatarFallback>
-                        {startupProfile?.users?.first_name?.[0]}
-                        {startupProfile?.users?.last_name?.[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {startupProfile?.company_name || "Your Startup"}
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {startupProfile?.users?.first_name} {startupProfile?.users?.last_name}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/startup/profile">
-                      <Building2 className="mr-2 h-4 w-4" />
-                      <span>Startup Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/startup/settings">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            </nav>
+          </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-auto bg-background">
-        <div className="p-6">
-          <Card>
-            <CardContent className="p-6">
+      {/* Main Content */}
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden transition-colors duration-300">
+            <div className="p-6 sm:p-8">
               {children}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </main>
     </div>

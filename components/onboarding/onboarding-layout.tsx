@@ -10,6 +10,7 @@ import { Building2, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useAuth } from "@/components/providers"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 
 interface OnboardingStep {
   title: string
@@ -66,19 +67,23 @@ export function OnboardingLayout({ children, type }: OnboardingLayoutProps) {
   const currentStepIndex = pathname ? steps.findIndex((step) => step.path === pathname) : -1
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <header className="bg-card border-b border-border">
+    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
+      <header className="bg-card border-b border-border transition-colors duration-300">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <Building2 className="h-8 w-8 text-primary" />
             <span className="ml-2 text-xl font-bold text-foreground">StartupConnect</span>
           </Link>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Link>
-          </Button>
+          <div className="flex items-center space-x-3">
+            <ThemeToggle variant="ghost" size="sm" />
+            
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/dashboard">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
