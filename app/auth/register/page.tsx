@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Building2, Mail, Lock, User } from "lucide-react"
 import { supabase } from "@/lib/supabase"
+import { cn } from '@/lib/utils'
+import { ProfileValidationModal } from "@/components/ui/profile-validation-modal"
 
 export default function RegisterPage() {
   const searchParams = useSearchParams()
@@ -27,7 +29,62 @@ export default function RegisterPage() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [existingProfile, setExistingProfile] = useState<{type: 'startup' | 'investor', data: any} | null>(null)
+  const [showValidationModal, setShowValidationModal] = useState(false)
   const router = useRouter()
+
+  // Check for existing profiles when user tries to register
+  const checkExistingProfiles = async (email: string) => {
+    try {
+      // First check if user exists
+      const { data: userData } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: 'dummy' // This will fail but we just want to check if user exists
+      })
+    } catch (error: any) {
+      if (error.message?.includes('Invalid login credentials')) {
+        // User doesn't exist, safe to proceed
+        return null
+      }
+    }
+
+    // If we get here, user might exist, let's check profiles
+    try {
+      const { data: users } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email)
+        .single()
+
+      if (users) {
+        // Check for startup profile
+        const { data: startupData } = await supabase
+          .from("startups")
+          .select("id, company_name, status")
+          .eq("user_id", users.id)
+          .single()
+
+        if (startupData) {
+          return { type: 'startup' as const, data: startupData }
+        }
+
+        // Check for investor profile
+        const { data: investorData } = await supabase
+          .from("investors")
+          .select("id, name, type, status")
+          .eq("user_id", users.id)
+          .single()
+
+        if (investorData) {
+          return { type: 'investor' as const, data: investorData }
+        }
+      }
+    } catch (error) {
+      console.error("Error checking existing profiles:", error)
+    }
+
+    return null
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,6 +92,15 @@ export default function RegisterPage() {
     setError("")
 
     try {
+      // Check for existing profiles with different type
+      const existingProfileCheck = await checkExistingProfiles(formData.email)
+      if (existingProfileCheck && existingProfileCheck.type !== formData.userType) {
+        setExistingProfile(existingProfileCheck)
+        setShowValidationModal(true)
+        setLoading(false)
+        return
+      }
+
       // Sign up the user with metadata
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
@@ -142,16 +208,34 @@ export default function RegisterPage() {
               <RadioGroup
                 value={formData.userType}
                 onValueChange={(value) => setFormData({ ...formData, userType: value })}
-                className="flex space-x-4"
+                className="flex gap-6"
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="startup" id="startup" />
-                  <Label htmlFor="startup">Startup Founder</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="investor" id="investor" />
-                  <Label htmlFor="investor">Investor</Label>
-                </div>
+                <label
+                  htmlFor="startup"
+                  className={cn(
+                    "flex items-center cursor-pointer rounded-full border px-6 py-2 font-semibold transition-all duration-150",
+                    formData.userType === "startup"
+                      ? "bg-primary text-white border-primary shadow"
+                      : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                  )}
+                  tabIndex={0}
+                >
+                  <RadioGroupItem value="startup" id="startup" className="sr-only" />
+                  <span>Startup Founder</span>
+                </label>
+                <label
+                  htmlFor="investor"
+                  className={cn(
+                    "flex items-center cursor-pointer rounded-full border px-6 py-2 font-semibold transition-all duration-150",
+                    formData.userType === "investor"
+                      ? "bg-primary text-white border-primary shadow"
+                      : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                  )}
+                  tabIndex={0}
+                >
+                  <RadioGroupItem value="investor" id="investor" className="sr-only" />
+                  <span>Investor</span>
+                </label>
               </RadioGroup>
             </div>
 
@@ -261,6 +345,23 @@ export default function RegisterPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Profile Validation Modal */}
+      {existingProfile && (
+        <ProfileValidationModal
+          isOpen={showValidationModal}
+          onClose={() => setShowValidationModal(false)}
+          existingProfileType={existingProfile.type}
+          attemptedProfileType={formData.userType as 'startup' | 'investor'}
+          onSwitchToDashboard={() => {
+            if (existingProfile.type === 'startup') {
+              router.push('/startup/dashboard')
+            } else {
+              router.push('/investor/dashboard')
+            }
+          }}
+        />
+      )}
     </div>
   )
 }

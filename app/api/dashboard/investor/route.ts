@@ -77,26 +77,26 @@ async function fetchInvestorDashboardData(supabase: any, user: any) {
     wishlistCountRes
   ] = await Promise.all([
     serviceSupabase
-      .from("matches")
-      .select("*", { count: "exact", head: true })
+    .from("matches")
+    .select("*", { count: "exact", head: true })
       .eq("investor_id", investor.id),
     serviceSupabase
-      .from("matches")
-      .select("*", { count: "exact", head: true })
-      .eq("investor_id", investor.id)
+    .from("matches")
+    .select("*", { count: "exact", head: true })
+    .eq("investor_id", investor.id)
       .eq("status", "interested"),
     serviceSupabase
-      .from("meetings")
-      .select("*", { count: "exact", head: true })
-      .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
+    .from("meetings")
+    .select("*", { count: "exact", head: true })
+    .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
       .in("status", ["pending", "confirmed"]),
     serviceSupabase
-      .from("meetings")
-      .select("*, match_id")
-      .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
-      .gte("scheduled_at", new Date().toISOString())
-      .in("status", ["pending", "confirmed"])
-      .order("scheduled_at", { ascending: true })
+    .from("meetings")
+    .select("*, match_id")
+    .or(`organizer_id.eq.${user.id},attendee_id.eq.${user.id}`)
+    .gte("scheduled_at", new Date().toISOString())
+    .in("status", ["pending", "confirmed"])
+    .order("scheduled_at", { ascending: true })
       .limit(5),
     serviceSupabase
       .from("investor_wishlist")
@@ -122,35 +122,35 @@ async function fetchInvestorDashboardData(supabase: any, user: any) {
         .in("id", matchIds)
       const matchesData: Array<{ id: string; startup_id: string }> = matchesDataRes.data || []
       const matchToStartupMap: Record<string, string> = matchesData.reduce((acc, match) => {
-        acc[match.id] = match.startup_id
-        return acc
+          acc[match.id] = match.startup_id
+          return acc
       }, {} as Record<string, string>)
       const startupIds: string[] = matchesData.map((match) => match.startup_id).filter(Boolean)
       let startupNameMap: Record<string, string> = {}
-      if (startupIds.length > 0) {
+        if (startupIds.length > 0) {
         const startupsDataRes = await serviceSupabase
-          .from("startups")
-          .select("id, company_name")
-          .in("id", startupIds)
+            .from("startups")
+            .select("id, company_name")
+            .in("id", startupIds)
         const startupsData: Array<{ id: string; company_name: string }> = startupsDataRes.data || []
         startupNameMap = startupsData.reduce((acc, startup) => {
-          acc[startup.id] = startup.company_name
-          return acc
+              acc[startup.id] = startup.company_name
+              return acc
         }, {} as Record<string, string>)
       }
       processedMeetings = upcomingMeetingsData.map((meeting: any) => {
-        const matchId = meeting.match_id
-        const startupId = matchToStartupMap[matchId]
-        const startupName = startupNameMap[startupId] || "Startup"
-        return {
-          id: meeting.id,
-          startup: startupName,
-          date: meeting.scheduled_at,
-          status: meeting.status,
+              const matchId = meeting.match_id
+              const startupId = matchToStartupMap[matchId]
+              const startupName = startupNameMap[startupId] || "Startup"
+              return {
+                id: meeting.id,
+                startup: startupName,
+                date: meeting.scheduled_at,
+                status: meeting.status,
+              }
+            })
+          }
         }
-      })
-    }
-  }
   if (processedMeetings.length === 0 && upcomingMeetingsData) {
     processedMeetings = upcomingMeetingsData.map((meeting: any) => ({
       id: meeting.id,
