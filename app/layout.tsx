@@ -5,6 +5,7 @@ import localFont from "next/font/local"
 import { Providers } from "@/components/providers"
 import { MainLayout } from "@/components/layout/main-layout"
 import { Toaster } from "@/components/ui/toaster"
+import { PerformanceMonitor } from "@/components/performance-monitor"
 import "./globals.css"
 
 const inter = Inter({
@@ -65,6 +66,7 @@ export default function RootLayout({
             {children}
           </MainLayout>
           <Toaster />
+          <PerformanceMonitor />
         </Providers>
       </body>
     </html>

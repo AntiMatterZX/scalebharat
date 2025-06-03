@@ -1,54 +1,62 @@
 import { NextResponse } from "next/server"
-import { createServerSupabaseClient } from "@/lib/auth"
-import { logger } from "@/lib/logging"
+import { supabase } from "@/lib/supabase"
 
 export async function GET() {
+  const startTime = Date.now()
+  
   try {
-    // Check if environment variables are set
-    const envCheck = {
-      supabase: !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-      smtp: !!(process.env.SMTP_HOST && process.env.SMTP_USER),
-      app: !!process.env.NEXT_PUBLIC_APP_URL,
+    // Check database connectivity
+    const { error } = await supabase
+      .from('users')
+      .select('count')
+      .limit(1)
+      .single()
+
+    const responseTime = Date.now() - startTime
+
+    if (error && error.code !== 'PGRST116') {
+      return NextResponse.json(
+        {
+          status: 'unhealthy',
+          timestamp: new Date().toISOString(),
+          checks: {
+            database: 'failed',
+            responseTime: `${responseTime}ms`
+          },
+          error: error.message
+        },
+        { status: 503 }
+      )
     }
 
-    // Check Supabase connection
-    let dbStatus = false
-    try {
-      const supabase = createServerSupabaseClient()
-      const { error } = await supabase.from("users").select("count").limit(1)
-      dbStatus = !error
-    } catch (error) {
-      logger.error("Health check - Database connection failed", { error })
-    }
-
-    const status = {
-      status: "ok",
+    return NextResponse.json({
+      status: 'healthy',
       timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV,
       checks: {
-        environment: envCheck,
-        database: dbStatus,
+        database: 'connected',
+        responseTime: `${responseTime}ms`
       },
-    }
-
-    // Determine overall health
-    const isHealthy = Object.values(envCheck).every(Boolean) && dbStatus
-
-    return NextResponse.json(status, {
-      status: isHealthy ? 200 : 503,
-      headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-      },
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV
     })
   } catch (error) {
-    logger.error("Health check failed", { error })
+    const responseTime = Date.now() - startTime
+    
     return NextResponse.json(
       {
-        status: "error",
-        message: "Health check failed",
+        status: 'unhealthy',
         timestamp: new Date().toISOString(),
+        checks: {
+          database: 'failed',
+          responseTime: `${responseTime}ms`
+        },
+        error: error instanceof Error ? error.message : 'Unknown error'
       },
-      { status: 500 },
+      { status: 503 }
     )
   }
+}
+
+export async function HEAD() {
+  return new Response(null, { status: 200 })
 }
