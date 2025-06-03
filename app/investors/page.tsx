@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase"
 import { Search, Filter, MapPin, DollarSign, TrendingUp, Star, Building2 } from "lucide-react"
 import Link from "next/link"
+import { Investor3DCard } from "@/components/ui/3d-card"
 
 export default function InvestorsPage() {
   const [investors, setInvestors] = useState<any[]>([])
@@ -87,19 +88,23 @@ export default function InvestorsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Investors</h1>
-          <p className="text-gray-600">Discover investors and venture capital firms looking for startups like yours</p>
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent mb-4">
+            Browse Investors
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Discover investors and venture capital firms looking for startups like yours. Find your perfect funding partner.
+          </p>
         </div>
 
         {/* Filters */}
-        <Card className="mb-6">
+        <Card className="mb-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Filter className="h-5 w-5 text-green-600" />
               Filters
             </CardTitle>
           </CardHeader>
@@ -113,7 +118,7 @@ export default function InvestorsPage() {
                     placeholder="Search investors..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-white/50 dark:bg-slate-700/50"
                   />
                 </div>
               </div>
@@ -174,105 +179,28 @@ export default function InvestorsPage() {
         </Card>
 
         {/* Results */}
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-gray-600">
+        <div className="mb-8 flex items-center justify-between">
+          <p className="text-gray-700 dark:text-gray-300 font-medium">
             {filteredInvestors.length} investor{filteredInvestors.length !== 1 ? "s" : ""} found
           </p>
         </div>
 
         {/* Investors Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:gap-10 lg:gap-12 md:grid-cols-2 xl:grid-cols-3">
           {filteredInvestors.map((investor) => (
-            <Card key={investor.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage
-                      src={investor.users?.profile_picture || "/placeholder.svg"}
-                      alt={investor.firm_name || `${investor.users?.first_name} ${investor.users?.last_name}`}
-                    />
-                    <AvatarFallback>
-                      {investor.firm_name
-                        ? investor.firm_name
-                            .split(" ")
-                            .map((word: string) => word[0])
-                            .join("")
-                            .substring(0, 2)
-                        : `${investor.users?.first_name?.[0] || ""}${investor.users?.last_name?.[0] || ""}`}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-lg truncate">
-                        {investor.firm_name || `${investor.users?.first_name} ${investor.users?.last_name}`}
-                      </h3>
-                      {investor.is_verified && <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />}
-                    </div>
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {investor.type}
-                      </Badge>
-                      {investor.is_featured && (
-                        <Badge variant="secondary" className="text-xs">
-                          Featured
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-0">
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">{investor.bio || "No bio available"}</p>
-
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <DollarSign className="h-4 w-4 text-gray-400" />
-                    <span className="text-gray-600">
-                      {formatCurrency(investor.check_size_min)} - {formatCurrency(investor.check_size_max)}
-                    </span>
-                  </div>
-
-                  {investor.investment_stages && investor.investment_stages.length > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <TrendingUp className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">
-                        {investor.investment_stages.slice(0, 2).join(", ")}
-                        {investor.investment_stages.length > 2 && ` +${investor.investment_stages.length - 2}`}
-                      </span>
-                    </div>
-                  )}
-
-                  {investor.investment_geographies && investor.investment_geographies.length > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">
-                        {investor.investment_geographies.slice(0, 2).join(", ")}
-                        {investor.investment_geographies.length > 2 &&
-                          ` +${investor.investment_geographies.length - 2}`}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <Link href={`/investors/${investor.slug || investor.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      View Profile
-                    </Button>
-                  </Link>
-                  <Button size="sm">Contact</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Investor3DCard key={investor.id} investor={investor} />
           ))}
         </div>
 
         {filteredInvestors.length === 0 && (
-          <div className="text-center py-12">
-            <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No investors found</h3>
-            <p className="text-gray-600">Try adjusting your filters or search terms to find more investors.</p>
+          <div className="text-center py-20">
+            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 max-w-md mx-auto border-0">
+              <Building2 className="h-16 w-16 text-green-500 mx-auto mb-6" />
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No investors found</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Try adjusting your filters or search terms to find more investors. The perfect funding partner is out there!
+              </p>
+            </div>
           </div>
         )}
       </div>

@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase"
 import { Search, Filter, MapPin, DollarSign, TrendingUp, Star, Building2 } from "lucide-react"
 import Link from "next/link"
+import { Startup3DCard } from "@/components/ui/3d-card"
 
 export default function StartupsPage() {
   const [startups, setStartups] = useState<any[]>([])
@@ -88,19 +89,23 @@ export default function StartupsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Startups</h1>
-          <p className="text-gray-600">Discover innovative startups looking for investment and partnerships</p>
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+            Browse Startups
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Discover innovative startups looking for investment and partnerships. Connect with the next big thing.
+          </p>
         </div>
 
         {/* Filters */}
-        <Card className="mb-6">
+        <Card className="mb-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Filter className="h-5 w-5 text-blue-600" />
               Filters
             </CardTitle>
           </CardHeader>
@@ -114,7 +119,7 @@ export default function StartupsPage() {
                     placeholder="Search startups..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 bg-white/50 dark:bg-slate-700/50"
                   />
                 </div>
               </div>
@@ -184,108 +189,28 @@ export default function StartupsPage() {
         </Card>
 
         {/* Results */}
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-gray-600">
+        <div className="mb-8 flex items-center justify-between">
+          <p className="text-gray-700 dark:text-gray-300 font-medium">
             {filteredStartups.length} startup{filteredStartups.length !== 1 ? "s" : ""} found
           </p>
         </div>
 
         {/* Startups Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:gap-10 lg:gap-12 md:grid-cols-2 xl:grid-cols-3">
           {filteredStartups.map((startup) => (
-            <Card key={startup.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex items-start gap-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage
-                      src={startup.logo || "/placeholder.svg"}
-                      alt={startup.company_name}
-                    />
-                    <AvatarFallback>
-                      {startup.company_name
-                        ? startup.company_name
-                            .split(" ")
-                            .map((word: string) => word[0])
-                            .join("")
-                            .substring(0, 2)
-                        : "ST"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-lg truncate">
-                        {startup.company_name}
-                      </h3>
-                      {startup.is_verified && <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />}
-                    </div>
-                    <p className="text-sm text-gray-600 truncate mb-2">{startup.tagline}</p>
-                    <div className="flex flex-wrap gap-1 mb-2">
-                      {startup.stage && (
-                        <Badge variant="outline" className="text-xs capitalize">
-                          {startup.stage}
-                        </Badge>
-                      )}
-                      {startup.is_featured && (
-                        <Badge variant="secondary" className="text-xs">
-                          Featured
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="pt-0">
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3">{startup.description || "No description available"}</p>
-
-                <div className="space-y-2 mb-4">
-                  {startup.target_amount && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <DollarSign className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">
-                        Seeking {formatCurrency(startup.target_amount)}
-                      </span>
-                    </div>
-                  )}
-
-                  {startup.industry && startup.industry.length > 0 && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <TrendingUp className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">
-                        {startup.industry.slice(0, 2).join(", ")}
-                        {startup.industry.length > 2 && ` +${startup.industry.length - 2}`}
-                      </span>
-                    </div>
-                  )}
-
-                  {startup.location && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <span className="text-gray-600">
-                        {startup.location}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-2">
-                  <Link href={`/startups/${startup.slug || startup.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full">
-                      View Profile
-                    </Button>
-                  </Link>
-                  <Button size="sm">Connect</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <Startup3DCard key={startup.id} startup={startup} />
           ))}
         </div>
 
         {filteredStartups.length === 0 && (
-          <div className="text-center py-12">
-            <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No startups found</h3>
-            <p className="text-gray-600">Try adjusting your filters or search terms to find more startups.</p>
+          <div className="text-center py-20">
+            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 max-w-md mx-auto border-0">
+              <Building2 className="h-16 w-16 text-blue-500 mx-auto mb-6" />
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No startups found</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Try adjusting your filters or search terms to find more startups. There are many innovative companies waiting to be discovered!
+              </p>
+            </div>
           </div>
         )}
       </div>
