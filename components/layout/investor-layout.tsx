@@ -148,7 +148,7 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
             <Link href="/investor/dashboard" className="flex items-center gap-2">
               <TrendingUp className="h-6 w-6 text-primary" />
               <span className="font-semibold text-lg text-foreground hidden sm:block">StartupConnect</span>
-            </Link>
+                  </Link>
 
             {/* Right: Profile and Actions */}
             <div className="flex items-center gap-3">
@@ -156,7 +156,7 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
               
               {/* Notifications */}
               <Button variant="ghost" size="sm" className="relative">
-                <Bell className="h-5 w-5" />
+                    <Bell className="h-5 w-5" />
                 {(pendingMatches + unreadMessages) > 0 && (
                   <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
                 )}
@@ -167,7 +167,7 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2 h-9 px-3">
                     <Avatar className="h-7 w-7 border border-border">
-                      <AvatarImage 
+                      <AvatarImage
                         src={investorProfile?.users?.profile_picture || user?.user_metadata?.profile_picture} 
                         alt={`${investorProfile?.users?.first_name} ${investorProfile?.users?.last_name}` || user?.email} 
                       />
@@ -184,7 +184,7 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {investorProfile?.firm_name || 'Investor'}
-                      </span>
+                    </span>
                     </div>
                     <ChevronDown className="h-3 w-3 ml-1" />
                   </Button>
@@ -229,8 +229,8 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
+            </div>
           </div>
-        </div>
 
         {/* Enhanced Navigation Tabs */}
         <div className="border-b border-border">

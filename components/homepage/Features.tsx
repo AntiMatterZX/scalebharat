@@ -113,13 +113,13 @@ const Features = () => {
           <div className="block lg:hidden space-y-4">
             {/* Main 3D Feature Card - Mobile */}
             <BentoBlock className="min-h-[300px]">
-              <ThreeDHoverCard />
-            </BentoBlock>
+            <ThreeDHoverCard />
+          </BentoBlock>
 
             {/* Feature Cards Grid - Mobile to Tablet */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Smart Matching */}
-              <BentoBlock
+          {/* Smart Matching */}
+          <BentoBlock
                 className="bg-gradient-to-br from-blue-500 to-purple-600 min-h-[200px]"
                 whileHover={{ rotate: "1deg", scale: 1.02 }}
               >
@@ -149,9 +149,9 @@ const Features = () => {
               {/* Verified Network - Full Width on Tablet */}
               <BentoBlock
                 className="bg-gradient-to-br from-orange-500 to-red-600 min-h-[200px] sm:col-span-2"
-                whileHover={{ rotate: "1deg", scale: 1.02 }}
-              >
-                <div className="h-full flex flex-col justify-between text-white">
+            whileHover={{ rotate: "1deg", scale: 1.02 }}
+          >
+            <div className="h-full flex flex-col justify-between text-white">
                   <Shield className="h-6 w-6 sm:h-8 sm:w-8 mb-3 sm:mb-4" />
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">Verified Network</h3>
@@ -215,80 +215,80 @@ const Features = () => {
               whileHover={{ rotate: "1deg", scale: 1.02 }}
             >
               <div className="h-full flex flex-col justify-between text-white p-2">
-                <Target className="h-8 w-8 mb-4" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Smart Matching</h3>
-                  <p className="text-blue-100 text-sm">AI-powered connections between startups and investors</p>
-                </div>
+              <Target className="h-8 w-8 mb-4" />
+              <div>
+                <h3 className="text-xl font-bold mb-2">Smart Matching</h3>
+                <p className="text-blue-100 text-sm">AI-powered connections between startups and investors</p>
               </div>
-            </BentoBlock>
+            </div>
+          </BentoBlock>
 
             {/* Analytics Dashboard - Desktop */}
-            <BentoBlock
+          <BentoBlock
               className="col-span-4 bg-gradient-to-br from-green-500 to-emerald-600 min-h-[200px]"
-              whileHover={{ rotate: "-1deg", scale: 1.02 }}
-            >
-              <div className="h-full flex flex-col justify-between text-white">
-                <BarChart3 className="h-8 w-8 mb-4" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Real-time Analytics</h3>
-                  <p className="text-green-100 text-sm">Track performance and engagement metrics</p>
-                </div>
+            whileHover={{ rotate: "-1deg", scale: 1.02 }}
+          >
+            <div className="h-full flex flex-col justify-between text-white">
+              <BarChart3 className="h-8 w-8 mb-4" />
+              <div>
+                <h3 className="text-xl font-bold mb-2">Real-time Analytics</h3>
+                <p className="text-green-100 text-sm">Track performance and engagement metrics</p>
               </div>
-            </BentoBlock>
+            </div>
+          </BentoBlock>
 
             {/* Verified Network - Desktop */}
-            <BentoBlock
+          <BentoBlock
               className="col-span-4 bg-gradient-to-br from-orange-500 to-red-600 min-h-[200px]"
-              whileHover={{ rotate: "1deg", scale: 1.02 }}
-            >
-              <div className="h-full flex flex-col justify-between text-white">
-                <Shield className="h-8 w-8 mb-4" />
-                <div>
-                  <h3 className="text-xl font-bold mb-2">Verified Network</h3>
-                  <p className="text-orange-100 text-sm">Thoroughly vetted investors and startups</p>
-                </div>
+            whileHover={{ rotate: "1deg", scale: 1.02 }}
+          >
+            <div className="h-full flex flex-col justify-between text-white">
+              <Shield className="h-8 w-8 mb-4" />
+              <div>
+                <h3 className="text-xl font-bold mb-2">Verified Network</h3>
+                <p className="text-orange-100 text-sm">Thoroughly vetted investors and startups</p>
               </div>
-            </BentoBlock>
+            </div>
+          </BentoBlock>
 
             {/* Communication Tools - Desktop */}
             <BentoBlock className="col-span-8 min-h-[140px]">
               <div className="flex items-center justify-between h-full gap-4">
-                <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6">
                   <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-8 w-8 text-purple-600" />
-                  </div>
-                  <div>
+                  <MessageSquare className="h-8 w-8 text-purple-600" />
+                </div>
+                <div>
                     <h3 className="text-3xl font-bold mb-2">Seamless Communication</h3>
                     <p className="text-muted-foreground text-lg">Built-in messaging, document sharing, and meeting scheduling</p>
                   </div>
                 </div>
                 <ArrowRight className="h-6 w-6 text-muted-foreground flex-shrink-0" />
-              </div>
-            </BentoBlock>
+            </div>
+          </BentoBlock>
 
             {/* Stats Grid - Desktop */}
             <div className="col-span-12 grid grid-cols-4 gap-4">
               <StatsBlock
-                number="500+"
-                label="Active Startups"
-                color="from-blue-500 to-blue-600"
-              />
+            number="500+"
+            label="Active Startups"
+            color="from-blue-500 to-blue-600"
+          />
               <StatsBlock
-                number="200+"
-                label="Verified Investors"
-                color="from-green-500 to-green-600"
-              />
+            number="200+"
+            label="Verified Investors"
+            color="from-green-500 to-green-600"
+          />
               <StatsBlock
-                number="$50M+"
-                label="Funding Raised"
-                color="from-purple-500 to-purple-600"
-              />
+            number="$50M+"
+            label="Funding Raised"
+            color="from-purple-500 to-purple-600"
+          />
               <StatsBlock
-                number="95%"
-                label="Success Rate"
-                color="from-orange-500 to-orange-600"
-              />
+            number="95%"
+            label="Success Rate"
+            color="from-orange-500 to-orange-600"
+          />
             </div>
           </div>
         </motion.div>
@@ -403,7 +403,7 @@ const ThreeDHoverCard = () => {
           <ScreenMock />
         </div>
         <div className="flex-1 w-full min-w-0 flex items-center">
-          <CardCopy />
+        <CardCopy />
         </div>
       </div>
     </motion.div>

@@ -187,9 +187,9 @@ CREATE TABLE IF NOT EXISTS public.messages (
 -- Meetings table
 CREATE TABLE IF NOT EXISTS public.meetings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  match_id UUID REFERENCES public.matches(id) ON DELETE CASCADE,
+  match_id UUID REFERENCES public.matches(id) ON DELETE CASCADE, -- Made nullable for standalone meetings
   organizer_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
-  attendee_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  attendee_id UUID REFERENCES public.users(id) ON DELETE CASCADE, -- Made nullable for external attendees
   title TEXT NOT NULL,
   description TEXT,
   scheduled_at TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -216,7 +216,8 @@ CREATE TABLE IF NOT EXISTS public.meetings (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
   -- Constraints
-  CONSTRAINT valid_duration CHECK (duration_minutes > 0 AND duration_minutes <= 480)
+  CONSTRAINT valid_duration CHECK (duration_minutes > 0 AND duration_minutes <= 480),
+  CONSTRAINT valid_organizer_attendee CHECK (organizer_id != attendee_id OR attendee_id IS NULL)
 );
 
 -- =====================================================

@@ -488,11 +488,11 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
   return (
     <>
       {/* Backdrop overlay */}
-      <motion.div
+        <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
+          transition={{ duration: 0.2 }}
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] lg:hidden"
         onClick={() => setIsOpen(false)}
       />
@@ -594,25 +594,25 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
               className="flex items-center gap-3 p-3 bg-accent/50 rounded-lg"
             >
               <Avatar className="h-10 w-10 border-2 border-primary">
-                <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
+                        <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
-                  {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
+                          {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">
-                  {user.user_metadata?.full_name || 'User'}
-                </p>
+                          {user.user_metadata?.full_name || 'User'}
+                        </p>
                 <p className="text-xs text-muted-foreground truncate">
-                  {user.email}
-                </p>
+                          {user.email}
+                        </p>
                 {userType && !profileLoading && (
                   <p className="text-xs text-primary font-medium capitalize">
                     {userType}
                   </p>
                 )}
               </div>
-            </motion.div>
+            </motion.div> 
           )}
           
           {/* Auth-based Navigation - Only for authenticated users */}
@@ -647,10 +647,10 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                           )}
                         </div>
                       </div>
-                    </Link>
+                      </Link>
                   </motion.div>
                 ))}
-              </div>
+                    </div>
             </motion.div>
           )}
           
@@ -663,7 +663,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
           >
             {user ? (
               <div 
-                onClick={handleSignOut}
+                        onClick={handleSignOut} 
                 className="w-full p-3 rounded-md border border-border bg-background hover:bg-accent transition-colors flex items-center gap-3 cursor-pointer"
               >
                 <FiArrowRight className="h-4 w-4 flex-shrink-0 rotate-180" />
@@ -671,7 +671,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                   <div className="text-sm font-medium">Sign out</div>
                   <div className="text-xs text-muted-foreground">Log out of your account</div>
                 </div>
-              </div>
+                    </div>
             ) : (
               <div className="space-y-2">
                 <Link href="/auth/login" onClick={() => setIsOpen(false)}>
@@ -679,13 +679,13 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                     <div className="text-sm font-medium">Sign in</div>
                     <div className="text-xs text-muted-foreground">Access your account</div>
                   </div>
-                </Link>
+                      </Link>
                 <Link href="/auth/register" onClick={() => setIsOpen(false)}>
                   <div className="w-full p-3 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
                     <div className="text-sm font-medium">Sign up</div>
                     <div className="text-xs opacity-70">Create a new account</div>
-                  </div>
-                </Link>
+                    </div>
+                      </Link>
               </div>
             )}
           </motion.div>
