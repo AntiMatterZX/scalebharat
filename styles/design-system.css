@@ -2,25 +2,27 @@
 
 /* ===== CUSTOM PROPERTIES ===== */
 :root {
-  /* Enhanced Color Palette */
-  --brand-primary: 220 100% 50%;
-  --brand-secondary: 142 76% 36%;
-  --brand-accent: 262 83% 58%;
-  --brand-warning: 38 92% 50%;
-  --brand-success: 142 76% 36%;
-  --brand-error: 0 84% 60%;
+  /* Enhanced Color Palette - Light Theme */
+  --brand-primary: 158 64% 24%;           /* Bottle Green */
+  --brand-secondary: 158 64% 35%;         /* Lighter Bottle Green */
+  --brand-accent: 144 61% 45%;            /* Forest Green */
+  --brand-warning: 38 92% 50%;            /* Amber */
+  --brand-success: 144 61% 40%;           /* Success Green */
+  --brand-error: 0 84% 60%;               /* Error Red */
   
-  /* Gradient Variables */
-  --gradient-primary: linear-gradient(135deg, hsl(220 100% 50%) 0%, hsl(262 83% 58%) 100%);
-  --gradient-secondary: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(220 100% 50%) 100%);
-  --gradient-hero: linear-gradient(135deg, hsl(220 100% 97%) 0%, hsl(262 83% 97%) 50%, hsl(142 76% 97%) 100%);
+  /* Gradient Variables - Light Theme */
+  --gradient-primary: linear-gradient(135deg, hsl(158 64% 24%) 0%, hsl(144 61% 35%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(158 64% 35%) 0%, hsl(158 64% 24%) 100%);
+  --gradient-hero: linear-gradient(135deg, hsl(158 20% 98%) 0%, hsl(158 30% 96%) 50%, hsl(144 20% 95%) 100%);
+  --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(158 20% 98%) 100%);
   
-  /* Enhanced Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+  /* Enhanced Shadows - Light Theme */
+  --shadow-sm: 0 1px 2px 0 rgba(24, 68, 56, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(24, 68, 56, 0.1), 0 2px 4px -1px rgba(24, 68, 56, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(24, 68, 56, 0.1), 0 4px 6px -2px rgba(24, 68, 56, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(24, 68, 56, 0.1), 0 10px 10px -5px rgba(24, 68, 56, 0.04);
+  --shadow-glow: 0 0 20px rgba(24, 68, 56, 0.15);
+  --shadow-primary: 0 4px 14px 0 rgba(24, 68, 56, 0.15);
   
   /* Animation Variables */
   --animation-fast: 150ms ease-out;
@@ -44,6 +46,31 @@
   --radius-2xl: 1.5rem;
 }
 
+/* Dark Theme Overrides */
+.dark {
+  /* Enhanced Color Palette - Dark Theme (Supabase-inspired) */
+  --brand-primary: 144 61% 55%;           /* Supabase Green */
+  --brand-secondary: 144 61% 65%;         /* Lighter Supabase Green */
+  --brand-accent: 158 64% 50%;            /* Emerald Accent */
+  --brand-warning: 38 92% 50%;            /* Amber */
+  --brand-success: 144 61% 60%;           /* Success Green */
+  --brand-error: 0 84% 60%;               /* Error Red */
+  
+  /* Gradient Variables - Dark Theme */
+  --gradient-primary: linear-gradient(135deg, hsl(144 61% 55%) 0%, hsl(158 64% 45%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(158 64% 45%) 0%, hsl(144 61% 55%) 100%);
+  --gradient-hero: linear-gradient(135deg, hsl(0 0% 6%) 0%, hsl(144 20% 8%) 50%, hsl(0 0% 4%) 100%);
+  --gradient-card: linear-gradient(135deg, hsl(0 0% 6%) 0%, hsl(144 10% 7%) 100%);
+  
+  /* Enhanced Shadows - Dark Theme */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.25);
+  --shadow-glow: 0 0 20px rgba(59, 191, 116, 0.2);
+  --shadow-primary: 0 4px 14px 0 rgba(59, 191, 116, 0.25);
+}
+
 /* ===== ENHANCED BASE STYLES ===== */
 * {
   @apply border-border transition-all duration-200;
@@ -56,15 +83,23 @@ html {
 body {
   @apply bg-background text-foreground font-sans antialiased;
   font-feature-settings: "rlig" 1, "calt" 1;
+  background: var(--gradient-hero);
+  background-attachment: fixed;
 }
 
 /* ===== ENHANCED TYPOGRAPHY ===== */
 .text-gradient {
-  @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+  background: var(--gradient-primary);
+  @apply bg-clip-text text-transparent;
 }
 
 .text-gradient-success {
   @apply bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent;
+}
+
+.text-gradient-dark {
+  background: var(--gradient-secondary);
+  @apply bg-clip-text text-transparent;
 }
 
 .heading-1 {
@@ -97,15 +132,29 @@ body {
 
 /* ===== ENHANCED COMPONENTS ===== */
 .card-elevated {
-  @apply bg-card border border-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  background: var(--gradient-card);
+  @apply border border-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  box-shadow: var(--shadow-md);
 }
 
 .card-interactive {
   @apply card-elevated hover:scale-[1.02] hover:border-primary/20 cursor-pointer;
+  transition: all 0.3s ease;
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-primary);
 }
 
 .button-gradient {
-  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg px-6 py-3 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200;
+  background: var(--gradient-primary);
+  @apply text-white font-medium rounded-lg px-6 py-3 transition-all duration-200;
+  box-shadow: var(--shadow-md);
+}
+
+.button-gradient:hover {
+  @apply scale-105;
+  box-shadow: var(--shadow-primary);
 }
 
 .button-gradient-success {
@@ -114,6 +163,7 @@ body {
 
 .input-enhanced {
   @apply w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200;
+  background: var(--gradient-card);
 }
 
 .badge-status {
@@ -121,19 +171,23 @@ body {
 }
 
 .badge-success {
-  @apply badge-status bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200;
+  @apply badge-status bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
 }
 
 .badge-warning {
-  @apply badge-status bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200;
+  @apply badge-status bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300;
 }
 
 .badge-error {
-  @apply badge-status bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200;
+  @apply badge-status bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
 }
 
 .badge-info {
-  @apply badge-status bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200;
+  @apply badge-status bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+}
+
+.badge-primary {
+  @apply badge-status bg-primary/10 text-primary border border-primary/20;
 }
 
 /* ===== LAYOUT UTILITIES ===== */
@@ -157,6 +211,35 @@ body {
   gap: 1.5rem;
 }
 
+/* ===== SUPABASE-INSPIRED UTILITIES ===== */
+.supabase-card {
+  @apply bg-card border border-border/50 rounded-xl p-6;
+  background: var(--gradient-card);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.supabase-card:hover {
+  @apply border-primary/30;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.supabase-button {
+  @apply bg-primary text-primary-foreground font-medium px-6 py-3 rounded-lg transition-all duration-200;
+  box-shadow: var(--shadow-sm);
+}
+
+.supabase-button:hover {
+  @apply scale-105;
+  box-shadow: var(--shadow-primary);
+}
+
+.supabase-input {
+  @apply bg-background border border-border rounded-lg px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200;
+  background: var(--gradient-card);
+}
+
 /* ===== ANIMATION UTILITIES ===== */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
@@ -172,6 +255,10 @@ body {
 
 .animate-bounce-subtle {
   animation: bounceSubtle 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes fadeIn {
@@ -206,14 +293,20 @@ body {
 }
 
 @keyframes bounceSubtle {
-  0%, 20%, 50%, 80%, 100% {
+  0%, 100% {
     transform: translateY(0);
   }
-  40% {
+  50% {
     transform: translateY(-5px);
   }
-  60% {
-    transform: translateY(-3px);
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(59, 191, 116, 0.2);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(59, 191, 116, 0.4);
   }
 }
 
@@ -223,10 +316,10 @@ body {
 }
 
 .responsive-flex {
-  @apply flex flex-col sm:flex-row gap-4;
+  @apply flex flex-col md:flex-row gap-4 md:gap-6;
 }
 
-/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+/* ===== ACCESSIBILITY ===== */
 .focus-visible-enhanced {
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
 }
@@ -250,11 +343,6 @@ body {
 
 .loading-spinner {
   @apply animate-spin rounded-full border-2 border-muted border-t-primary;
-}
-
-/* ===== DARK MODE ENHANCEMENTS ===== */
-.dark {
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.25);
 }
 
 /* ===== PRINT STYLES ===== */

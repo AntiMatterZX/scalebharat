@@ -102,13 +102,13 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
       title: "Matches",
       href: "/investor/matches",
       icon: <UsersIcon className="h-4 w-4" />,
-      badge: pendingMatches,
+      // badge: pendingMatches,
     },
     {
       title: "Messages",
       href: "/investor/messages",
       icon: <MessageSquare className="h-4 w-4" />,
-      badge: unreadMessages,
+      // badge: unreadMessages,
     },
     {
       title: "Wishlist",
