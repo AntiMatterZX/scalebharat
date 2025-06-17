@@ -10,6 +10,7 @@ export default function AuthCallbackPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const userType = searchParams.get("type") || "startup"
+  const isOAuth = searchParams.get("oauth") === "true"
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -32,7 +33,16 @@ export default function AuthCallbackPage() {
             .eq("user_id", user.id)
             .single()
 
-          // If no profile exists, create one based on the selected type
+          // Check if this is an OAuth user who hasn't completed setup
+          const isOAuthIncomplete = isOAuth && !user.user_metadata?.oauth_complete
+
+          if (isOAuthIncomplete || (!existingStartup && !existingInvestor && isOAuth)) {
+            // OAuth user needs to complete setup (set password + confirm user type)
+            router.push(`/auth/oauth-complete?type=${userType}`)
+            return
+          }
+
+          // If no profile exists and this is a regular sign-up, create one based on the selected type
           if (!existingStartup && !existingInvestor) {
             if (userType === "startup") {
               await supabase.from("startups").insert({
@@ -53,8 +63,14 @@ export default function AuthCallbackPage() {
               router.push("/onboarding/investor")
             }
           } else {
-            // User already has a profile, route to dashboard
-            router.push("/dashboard")
+            // User already has a profile, route to appropriate dashboard
+            if (existingStartup) {
+              router.push("/startup/dashboard")
+            } else if (existingInvestor) {
+              router.push("/investor/dashboard")
+            } else {
+              router.push("/dashboard")
+            }
           }
         } else {
           // No user found, redirect to login
@@ -67,7 +83,7 @@ export default function AuthCallbackPage() {
     }
 
     handleCallback()
-  }, [router, userType])
+  }, [router, userType, isOAuth])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

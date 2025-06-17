@@ -294,67 +294,6 @@ const Features = () => {
         </motion.div>
 
         {/* Benefits Section - Enhanced Responsive */}
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-          <div className="animate-slide-up order-2 lg:order-1">
-            <h3 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6">
-              Why choose StartupConnect?
-            </h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
-              Join thousands of successful startups and investors who have found their 
-              perfect match through our platform. We provide the tools, network, and 
-              support you need to achieve your funding goals.
-            </p>
-            
-            <div className="grid grid-cols-1 gap-3 sm:gap-4 mb-6 sm:mb-8">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-muted-foreground">{benefit}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Button asChild className="button-gradient w-full sm:w-auto">
-                <Link href="/onboarding">
-                  Get Started Today
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="w-full sm:w-auto">
-                <Link href="/startups">
-                  Browse Startups
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          <div className="relative animate-slide-up order-1 lg:order-2" style={{ animationDelay: '0.2s' }}>
-            {/* Stats Cards - Mobile Optimized */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <Card className="card-elevated text-center p-4 sm:p-6">
-                <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1 sm:mb-2">500+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Active Startups</div>
-              </Card>
-              <Card className="card-elevated text-center p-4 sm:p-6">
-                <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1 sm:mb-2">200+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Verified Investors</div>
-              </Card>
-              <Card className="card-elevated text-center p-4 sm:p-6">
-                <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1 sm:mb-2">$50M+</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Funding Raised</div>
-              </Card>
-              <Card className="card-elevated text-center p-4 sm:p-6">
-                <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1 sm:mb-2">95%</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Success Rate</div>
-              </Card>
-            </div>
-
-            {/* Floating Elements - Responsive */}
-            <div className="absolute -top-2 sm:-top-4 -right-2 sm:-right-4 w-12 h-12 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full animate-bounce-subtle" />
-            <div className="absolute -bottom-2 sm:-bottom-4 -left-2 sm:-left-4 w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-full animate-bounce-subtle" style={{ animationDelay: '1s' }} />
-          </div>
-        </div>
       </div>
     </section>
   )
@@ -474,47 +413,78 @@ const ScreenMock = () => {
 
 const CardCopy = () => {
   return (
-    <div className="flex items-center justify-center lg:justify-start w-full h-full">
-      <motion.div
-        variants={{
-          hovered: {
+    <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 lg:p-4">
+      <div className="w-full max-w-xs mx-auto lg:max-w-none lg:mx-0 text-center lg:text-left">
+        <motion.div
+          variants={{
+            hovered: {
+              x: -10,
+            },
+          }}
+          style={{
             x: 0,
-            opacity: 1,
-          },
-        }}
-        style={{
-          x: -40,
-          opacity: 0,
-        }}
-        transition={{
-          duration: 0.35,
-        }}
-        className="hidden lg:block mr-3 sm:mr-4"
-      >
-        <FiArrowRight className="text-xl sm:text-2xl text-primary" />
-      </motion.div>
-      <motion.div
-        variants={{
-          hovered: {
-            x: 0,
-          },
-        }}
-        style={{
-          x: -40,
-        }}
-        transition={{
-          duration: 0.35,
-        }}
-        className="text-center lg:text-left w-full"
-      >
-        <h4 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-2 leading-tight">
-          Increase developer productivity
-        </h4>
-        <p className="text-muted-foreground text-xs sm:text-sm lg:text-sm xl:text-base leading-relaxed">
-          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eveniet
-          debitis nam cumque? Our platform streamlines the connection process.
-        </p>
-      </motion.div>
+          }}
+          transition={{
+            duration: 0.35,
+          }}
+          className="space-y-1.5 sm:space-y-2.5 lg:space-y-4"
+        >
+          {/* Mobile badge - similar to section header */}
+          <div className="block sm:hidden mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 rounded-full">
+              <Brain className="h-3 w-3 text-primary" />
+              <span className="text-xs font-medium text-primary">Smart Platform</span>
+            </div>
+          </div>
+          
+          {/* Enhanced mobile headline */}
+          <h4 className="text-2xl sm:text-3xl lg:text-xl xl:text-2xl font-bold text-foreground leading-tight">
+            Connect Startups &<br />
+            <span className="text-primary">Investors</span>
+          </h4>
+          
+          {/* Enhanced mobile description */}
+          <p className="text-sm sm:text-lg lg:text-sm xl:text-base text-muted-foreground leading-relaxed sm:px-0">
+            Revolutionary platform that bridges the gap between innovative startups and strategic investors. Our AI-powered matching system creates meaningful connections that drive growth and success.
+          </p>
+          
+          {/* Tablet+ additional text */}
+          <p className="hidden sm:block text-sm lg:text-xs xl:text-sm text-muted-foreground/80 leading-relaxed">
+            Join over 500 active startups and 200+ verified investors who have already raised $50M+ in funding through our smart matching algorithm and real-time analytics platform.
+          </p>
+          
+          {/* Mobile CTA - desktop style */}
+          <div className="block sm:hidden">
+            <div className="flex items-center justify-center gap-2 text-primary">
+              <FiArrowRight className="text-base" />
+              <span className="text-sm font-medium">Get Started Today</span>
+            </div>
+          </div>
+        </motion.div>
+        
+        <motion.div
+          variants={{
+            hovered: {
+              x: 0,
+              opacity: 1,
+            },
+          }}
+          style={{
+            x: -40,
+            opacity: 0,
+          }}
+          transition={{
+            duration: 0.35,
+            delay: 0.1,
+          }}
+          className="hidden lg:flex items-center lg:justify-start mt-4"
+        >
+          <div className="flex items-center gap-2 text-primary">
+            <FiArrowRight className="text-base" />
+            <span className="text-sm font-medium">Explore Platform</span>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };
