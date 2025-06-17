@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { supabase } from "@/lib/supabase"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2, Users, Calendar, MessageSquare, TrendingUp, RefreshCw } from "lucide-react"
+import { Loader2, Users, Calendar, MessageSquare, TrendingUp, RefreshCw, AlertCircle } from "lucide-react"
 import { MatchCard } from "@/components/matches/match-card"
 import type { Database } from "@/types/database"
 
@@ -192,9 +192,9 @@ export default function StartupMatchesPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-10">
-        <div className="flex items-center justify-center h-60">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="w-full max-w-6xl mx-auto py-6 sm:py-8 lg:py-10">
+        <div className="flex items-center justify-center h-48 sm:h-60">
+          <Loader2 className="h-8 w-8 sm:h-12 sm:w-12 animate-spin text-primary" />
         </div>
       </div>
     )
@@ -202,11 +202,12 @@ export default function StartupMatchesPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto py-10">
+      <div className="w-full max-w-6xl mx-auto py-6 sm:py-8 lg:py-10">
         <Card>
-          <CardContent className="p-6 text-center">
-            <p className="text-destructive mb-4">{error}</p>
-            <Button onClick={fetchMatches}>Try Again</Button>
+          <CardContent className="p-4 sm:p-6 text-center">
+            <AlertCircle className="h-8 w-8 sm:h-12 sm:w-12 text-destructive mx-auto mb-4" />
+            <p className="text-destructive mb-4 text-sm sm:text-base">{error}</p>
+            <Button onClick={fetchMatches} size="sm">Try Again</Button>
           </CardContent>
         </Card>
       </div>
@@ -214,92 +215,120 @@ export default function StartupMatchesPage() {
   }
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Your Matches</h1>
-          <p className="text-muted-foreground">Connect with investors that match your startup profile</p>
+    <div className="w-full max-w-7xl mx-auto space-y-6 sm:space-y-8">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="space-y-1 sm:space-y-2">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">Your Matches</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Connect with investors that match your startup profile</p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={fetchMatches} variant="outline" size="sm">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <Button onClick={fetchMatches} variant="outline" size="sm" className="w-full sm:w-auto">
             <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            <span className="sm:hidden">Refresh</span>
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
-          <Button onClick={generateMatches} disabled={generating}>
+          <Button onClick={generateMatches} disabled={generating} size="sm" className="w-full sm:w-auto">
             {generating ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Generating...
+                <span className="sm:hidden">Generating...</span>
+                <span className="hidden sm:inline">Generating...</span>
               </>
             ) : (
               <>
                 <TrendingUp className="h-4 w-4 mr-2" />
-                Generate Matches
+                <span className="sm:hidden">Generate</span>
+                <span className="hidden sm:inline">Generate Matches</span>
               </>
             )}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Matches</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-4 pt-3 sm:pt-4">
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Total Matches</CardTitle>
+            <Users className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{matches.length}</div>
+          <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{matches.length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Total connections</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-4 pt-3 sm:pt-4">
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Pending</CardTitle>
+            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getMatchesByStatus("pending").length}</div>
+          <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{getMatchesByStatus("pending").length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Awaiting response</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Interested</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-4 pt-3 sm:pt-4">
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Interested</CardTitle>
+            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getMatchesByStatus("interested").length}</div>
+          <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{getMatchesByStatus("interested").length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Mutual interest</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Connected</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-4 pt-3 sm:pt-4">
+            <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">Connected</CardTitle>
+            <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{getMatchesByStatus("connected").length}</div>
+          <CardContent className="px-3 sm:px-4 pb-3 sm:pb-4">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{getMatchesByStatus("connected").length}</div>
+            <p className="text-xs text-muted-foreground mt-1">Active conversations</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">All Matches ({matches.length})</TabsTrigger>
-          <TabsTrigger value="pending">Pending ({getMatchesByStatus("pending").length})</TabsTrigger>
-          <TabsTrigger value="interested">Interested ({getMatchesByStatus("interested").length})</TabsTrigger>
-          <TabsTrigger value="connected">Connected ({getMatchesByStatus("connected").length})</TabsTrigger>
-          <TabsTrigger value="rejected">Rejected ({getMatchesByStatus("rejected").length})</TabsTrigger>
-        </TabsList>
+      {/* Tabs Section */}
+      <Tabs defaultValue="all" className="space-y-4 sm:space-y-6">
+        <div className="overflow-x-auto scrollbar-hide">
+          <TabsList className="inline-flex w-full min-w-fit h-auto p-1 gap-1">
+            <TabsTrigger value="all" className="flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4 py-2 h-auto">
+              <span className="hidden sm:inline">All Matches ({matches.length})</span>
+              <span className="sm:hidden">All ({matches.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="pending" className="flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4 py-2 h-auto">
+              <span className="hidden sm:inline">Pending ({getMatchesByStatus("pending").length})</span>
+              <span className="sm:hidden">Pending ({getMatchesByStatus("pending").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="interested" className="flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4 py-2 h-auto">
+              <span className="hidden sm:inline">Interested ({getMatchesByStatus("interested").length})</span>
+              <span className="sm:hidden">Interest ({getMatchesByStatus("interested").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="connected" className="flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4 py-2 h-auto">
+              <span className="hidden sm:inline">Connected ({getMatchesByStatus("connected").length})</span>
+              <span className="sm:hidden">Connected ({getMatchesByStatus("connected").length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="rejected" className="flex-shrink-0 text-xs sm:text-sm px-3 sm:px-4 py-2 h-auto">
+              <span className="hidden sm:inline">Rejected ({getMatchesByStatus("rejected").length})</span>
+              <span className="sm:hidden">Rejected ({getMatchesByStatus("rejected").length})</span>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="all">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {matches.map((match) => (
               <MatchCard key={match.id} match={match} onStatusUpdate={updateMatchStatus} userType="startup" />
             ))}
           </div>
           {matches.length === 0 && (
             <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground mb-4">No matches found</p>
-                <Button onClick={generateMatches} disabled={generating}>
+              <CardContent className="p-6 sm:p-8 text-center">
+                <Users className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-4 text-sm sm:text-base">No matches found</p>
+                <Button onClick={generateMatches} disabled={generating} className="w-full sm:w-auto">
                   {generating ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -315,46 +344,49 @@ export default function StartupMatchesPage() {
         </TabsContent>
 
         <TabsContent value="pending">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {getMatchesByStatus("pending").map((match) => (
               <MatchCard key={match.id} match={match} onStatusUpdate={updateMatchStatus} userType="startup" />
             ))}
           </div>
           {getMatchesByStatus("pending").length === 0 && (
             <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">No pending matches</p>
+              <CardContent className="p-6 sm:p-8 text-center">
+                <Calendar className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground text-sm sm:text-base">No pending matches</p>
               </CardContent>
             </Card>
           )}
         </TabsContent>
 
         <TabsContent value="interested">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {getMatchesByStatus("interested").map((match) => (
               <MatchCard key={match.id} match={match} onStatusUpdate={updateMatchStatus} userType="startup" />
             ))}
           </div>
           {getMatchesByStatus("interested").length === 0 && (
             <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">No interested matches</p>
+              <CardContent className="p-6 sm:p-8 text-center">
+                <TrendingUp className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground text-sm sm:text-base">No interested matches</p>
               </CardContent>
             </Card>
           )}
         </TabsContent>
 
         <TabsContent value="connected">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {getMatchesByStatus("connected").map((match) => (
               <MatchCard key={match.id} match={match} onStatusUpdate={updateMatchStatus} userType="startup" />
             ))}
           </div>
           {getMatchesByStatus("connected").length === 0 && (
             <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">No connected matches</p>
-                <p className="text-sm text-muted-foreground mt-2">
+              <CardContent className="p-6 sm:p-8 text-center">
+                <MessageSquare className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-2 text-sm sm:text-base">No connected matches</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Express interest in pending matches to start conversations
                 </p>
               </CardContent>
@@ -363,15 +395,16 @@ export default function StartupMatchesPage() {
         </TabsContent>
 
         <TabsContent value="rejected">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {getMatchesByStatus("rejected").map((match) => (
               <MatchCard key={match.id} match={match} onStatusUpdate={updateMatchStatus} userType="startup" />
             ))}
           </div>
           {getMatchesByStatus("rejected").length === 0 && (
             <Card>
-              <CardContent className="p-6 text-center">
-                <p className="text-muted-foreground">No rejected matches</p>
+              <CardContent className="p-6 sm:p-8 text-center">
+                <Users className="h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground text-sm sm:text-base">No rejected matches</p>
               </CardContent>
             </Card>
           )}

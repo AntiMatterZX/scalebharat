@@ -141,145 +141,63 @@ export function InvestorLayout({ children }: InvestorLayoutProps) {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Top Navigation */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border transition-colors duration-300">
-        <div className="px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16">
-            {/* Left: Logo */}
-            <Link href="/investor/dashboard" className="flex items-center gap-2">
-              <TrendingUp className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg text-foreground hidden sm:block">StartupConnect</span>
-                  </Link>
-
-            {/* Right: Profile and Actions */}
-            <div className="flex items-center gap-3">
-              <ThemeToggle variant="ghost" size="sm" />
-              
-              {/* Notifications */}
-              <Button variant="ghost" size="sm" className="relative">
-                    <Bell className="h-5 w-5" />
-                {(pendingMatches + unreadMessages) > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
-                )}
-              </Button>
-              
-              {/* Profile Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2 h-9 px-3">
-                    <Avatar className="h-7 w-7 border border-border">
-                      <AvatarImage
-                        src={investorProfile?.users?.profile_picture || user?.user_metadata?.profile_picture} 
-                        alt={`${investorProfile?.users?.first_name} ${investorProfile?.users?.last_name}` || user?.email} 
-                      />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        {investorProfile?.users?.first_name?.[0] || user?.user_metadata?.full_name?.[0] || user?.email?.[0] || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="hidden md:flex flex-col items-start">
-                      <span className="text-sm font-medium text-foreground">
-                        {investorProfile?.users ? 
-                          `${investorProfile.users.first_name} ${investorProfile.users.last_name}` : 
-                          user?.user_metadata?.full_name || 'User'
-                        }
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {investorProfile?.firm_name || 'Investor'}
-                    </span>
-                    </div>
-                    <ChevronDown className="h-3 w-3 ml-1" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {investorProfile?.users ? 
-                          `${investorProfile.users.first_name} ${investorProfile.users.last_name}` : 
-                          user?.user_metadata?.full_name || 'User'
-                        }
-                      </p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user?.email}
-                      </p>
-                      <p className="text-xs leading-none text-primary font-medium">
-                        {investorProfile?.firm_name || 'Investor'}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  
-                  <DropdownMenuItem asChild>
-                    <Link href="/investor/profile" className="flex items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      <span>My Profile</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/investor/settings" className="flex items-center">
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            </div>
-          </div>
-
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md transition-colors duration-300">
         {/* Enhanced Navigation Tabs */}
         <div className="border-b border-border">
-          <div className="px-4 sm:px-6">
-            <nav className="flex space-x-1 overflow-x-auto scrollbar-hide">
-              {navItems.map((item) => (
+          <div className="px-2 sm:px-4 lg:px-6 xl:px-8">
+            <div className="overflow-x-auto scrollbar-hide pb-2 pt-2">
+              <div className="inline-flex h-12 items-center justify-start rounded-xl bg-muted/50 p-1 text-muted-foreground gap-1 min-w-fit">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className={cn(
+                      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-fit relative",
+                      pathname === item.href
+                        ? "bg-background text-foreground shadow-md"
+                        : "hover:bg-background/50 hover:text-foreground"
+                    )}
+                  >
+                    <span className="flex-shrink-0">{item.icon}</span>
+                    <span className="hidden sm:inline ml-1.5 sm:ml-2">{item.title}</span>
+                    <span className="sm:hidden ml-1.5">
+                      {item.title === "Browse Startups" ? "Browse" : item.title.split(' ')[0]}
+                    </span>
+                    {item.badge && item.badge > 0 && (
+                      <span className="inline-flex items-center justify-center w-5 h-5 ml-1 sm:ml-2 text-xs font-medium text-primary-foreground bg-primary rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+                {/* Settings Tab */}
                 <Link
-                  key={item.title}
-                  href={item.href}
+                  href={settingsItem.href}
                   className={cn(
-                    "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
-                    pathname === item.href
-                      ? "text-foreground border-primary bg-accent/50"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
+                    "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-fit",
+                    pathname === settingsItem.href
+                      ? "bg-background text-foreground shadow-md"
+                      : "hover:bg-background/50 hover:text-foreground"
                   )}
                 >
-                  <span className="flex-shrink-0">{item.icon}</span>
-                  <span className="text-sm">{item.title}</span>
-                  {item.badge && item.badge > 0 && (
-                    <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
+                  <span className="flex-shrink-0">{settingsItem.icon}</span>
+                  <span className="hidden sm:inline ml-1.5 sm:ml-2">{settingsItem.title}</span>
+                  <span className="sm:hidden ml-1.5">Settings</span>
                 </Link>
-              ))}
-              {/* Settings Tab */}
-              <Link
-                href={settingsItem.href}
-                className={cn(
-                  "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
-                  pathname === settingsItem.href
-                    ? "text-foreground border-primary bg-accent/50"
-                    : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
-                )}
-              >
-                <span className="flex-shrink-0">{settingsItem.icon}</span>
-                <span className="text-sm">{settingsItem.title}</span>
-              </Link>
-            </nav>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden transition-colors duration-300">
-            <div className="p-6 sm:p-8">
-              {children}
+        <div className="w-full max-w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
+          <div className="max-w-[1920px] mx-auto">
+            <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden transition-colors duration-300">
+              <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+                {children}
+              </div>
             </div>
           </div>
         </div>

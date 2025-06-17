@@ -49,31 +49,31 @@ export function MatchCard({ match, userType, onStatusUpdate }: MatchCardProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="secondary">Pending Review</Badge>
+        return <Badge variant="secondary" className="text-xs">Pending Review</Badge>
       case "interested":
-        return <Badge variant="default">Interested</Badge>
+        return <Badge variant="default" className="text-xs">Interested</Badge>
       case "not-interested":
-        return <Badge variant="outline">Not Interested</Badge>
+        return <Badge variant="outline" className="text-xs">Not Interested</Badge>
       case "meeting-scheduled":
-        return <Badge className="bg-green-600">Meeting Scheduled</Badge>
+        return <Badge className="bg-green-600 text-xs">Meeting Scheduled</Badge>
       case "deal-closed":
-        return <Badge className="bg-purple-600">Deal Closed</Badge>
+        return <Badge className="bg-purple-600 text-xs">Deal Closed</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline" className="text-xs">{status}</Badge>
     }
   }
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12">
+    <Card className="hover:shadow-lg transition-shadow h-full flex flex-col">
+      <CardHeader className="pb-3 sm:pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div className="flex items-center space-x-3 min-w-0 flex-1">
+            <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
               <AvatarImage
                 src={profile?.logo || profile?.users?.profile_picture || "/placeholder.svg"}
                 alt={profile?.company_name || profile?.firm_name || "Profile"}
               />
-              <AvatarFallback>
+              <AvatarFallback className="text-xs sm:text-sm">
                 {(profile?.company_name || profile?.firm_name || "U")
                   .split(" ")
                   .map((word: string) => word[0])
@@ -81,64 +81,66 @@ export function MatchCard({ match, userType, onStatusUpdate }: MatchCardProps) {
                   .substring(0, 2)}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1">
-              <CardTitle className="text-lg">
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-sm sm:text-lg line-clamp-1">
                 {userType === "startup"
                   ? profile?.firm_name || `${profile?.users?.first_name} ${profile?.users?.last_name}`
                   : profile?.company_name}
               </CardTitle>
-              <CardDescription className="line-clamp-1">
+              <CardDescription className="line-clamp-1 text-xs sm:text-sm">
                 {userType === "startup" ? profile?.bio : profile?.tagline}
               </CardDescription>
               {profile?.is_verified && (
-                <Badge variant="secondary" className="text-xs mt-1">
+                <Badge variant="secondary" className="text-xs mt-1 w-fit">
                   <Star className="h-3 w-3 mr-1" />
                   Verified
                 </Badge>
               )}
             </div>
           </div>
-          <div className="text-right">
+          <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1">
             {getStatusBadge(match.status)}
-            <div className="mt-2">
-              <span className={`text-2xl font-bold ${getScoreColor(match.match_score)}`}>{match.match_score}%</span>
+            <div className="text-center sm:text-right">
+              <span className={`text-xl sm:text-2xl font-bold ${getScoreColor(match.match_score)}`}>
+                {match.match_score}%
+              </span>
               <p className="text-xs text-muted-foreground">Match Score</p>
             </div>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 flex-1">
         {/* Match Score Breakdown */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Match Breakdown</span>
+            <span className="text-xs sm:text-sm font-medium">Match Breakdown</span>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Info className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                  <Info className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-sm sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Match Score Details</DialogTitle>
-                  <DialogDescription>How this match score was calculated</DialogDescription>
+                  <DialogTitle className="text-base sm:text-lg">Match Score Details</DialogTitle>
+                  <DialogDescription className="text-sm">How this match score was calculated</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-3">
-                  {match.score_breakdown &&
-                    Object.entries(match.score_breakdown).map(([key, value]) => (
-                      <div key={key} className="flex justify-between items-center">
-                        <span className="capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                        <span className="font-medium">{value}%</span>
-                      </div>
-                    ))}
+                                      {match.score_breakdown &&
+                      Object.entries(match.score_breakdown).map(([key, value]) => (
+                        <div key={key} className="flex justify-between items-center">
+                          <span className="capitalize text-sm">{key.replace(/([A-Z])/g, " $1")}</span>
+                          <span className="font-medium text-sm">{String(value)}%</span>
+                        </div>
+                      ))}
                   {match.reasons && (
                     <div className="mt-4">
-                      <h4 className="font-medium mb-2">Match Reasons:</h4>
+                      <h4 className="font-medium mb-2 text-sm">Match Reasons:</h4>
                       <ul className="text-sm space-y-1">
                         {match.reasons.map((reason: string, index: number) => (
-                          <li key={index} className="flex items-center">
-                            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>
+                          <li key={index} className="flex items-center text-xs sm:text-sm">
+                            <span className="w-2 h-2 bg-blue-600 rounded-full mr-2 flex-shrink-0"></span>
                             {reason}
                           </li>
                         ))}
@@ -155,24 +157,24 @@ export function MatchCard({ match, userType, onStatusUpdate }: MatchCardProps) {
         <Separator />
 
         {/* Profile Details */}
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
           {userType === "startup" ? (
             <>
               <div>
-                <span className="text-muted-foreground">Type:</span>
-                <p className="font-medium capitalize">{profile?.type}</p>
+                <span className="text-muted-foreground text-xs sm:text-sm">Type:</span>
+                <p className="font-medium capitalize text-xs sm:text-sm">{profile?.type}</p>
               </div>
               {profile?.check_size_min && profile?.check_size_max && (
                 <div>
-                  <span className="text-muted-foreground">Check Size:</span>
-                  <p className="font-medium">
+                  <span className="text-muted-foreground text-xs sm:text-sm">Check Size:</span>
+                  <p className="font-medium text-xs sm:text-sm">
                     ${profile.check_size_min}K - ${profile.check_size_max}K
                   </p>
                 </div>
               )}
               {profile?.investment_stages && (
-                <div className="col-span-2">
-                  <span className="text-muted-foreground">Investment Stages:</span>
+                <div className="sm:col-span-2">
+                  <span className="text-muted-foreground text-xs sm:text-sm">Investment Stages:</span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {profile.investment_stages.slice(0, 3).map((stage: string) => (
                       <Badge key={stage} variant="outline" className="text-xs">
@@ -191,18 +193,18 @@ export function MatchCard({ match, userType, onStatusUpdate }: MatchCardProps) {
           ) : (
             <>
               <div>
-                <span className="text-muted-foreground">Stage:</span>
-                <p className="font-medium capitalize">{profile?.stage?.replace("-", " ")}</p>
+                <span className="text-muted-foreground text-xs sm:text-sm">Stage:</span>
+                <p className="font-medium capitalize text-xs sm:text-sm">{profile?.stage?.replace("-", " ")}</p>
               </div>
               {profile?.target_amount && (
                 <div>
-                  <span className="text-muted-foreground">Seeking:</span>
-                  <p className="font-medium">${(profile.target_amount / 1000).toFixed(0)}K</p>
+                  <span className="text-muted-foreground text-xs sm:text-sm">Seeking:</span>
+                  <p className="font-medium text-xs sm:text-sm">${(profile.target_amount / 1000).toFixed(0)}K</p>
                 </div>
               )}
               {profile?.industry && (
-                <div className="col-span-2">
-                  <span className="text-muted-foreground">Industries:</span>
+                <div className="sm:col-span-2">
+                  <span className="text-muted-foreground text-xs sm:text-sm">Industries:</span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {profile.industry.slice(0, 3).map((industry: string) => (
                       <Badge key={industry} variant="outline" className="text-xs">
@@ -225,66 +227,95 @@ export function MatchCard({ match, userType, onStatusUpdate }: MatchCardProps) {
           <>
             <Separator />
             <div>
-              <span className="text-sm text-muted-foreground">Notes:</span>
-              <p className="text-sm mt-1">{match.notes}</p>
+              <span className="text-xs sm:text-sm text-muted-foreground">Notes:</span>
+              <p className="text-xs sm:text-sm mt-1 leading-relaxed">{match.notes}</p>
             </div>
           </>
         )}
       </CardContent>
 
-      <CardFooter className="flex gap-2">
+      <CardFooter className="flex flex-col sm:flex-row gap-2 pt-3 sm:pt-4">
         {isPending && (
           <>
-            <Button className="flex-1" onClick={() => handleStatusUpdate("interested")} disabled={loading}>
-              <ThumbsUp className="h-4 w-4 mr-2" />
+            <Button 
+              className="w-full sm:flex-1" 
+              onClick={() => handleStatusUpdate("interested")} 
+              disabled={loading}
+              size="sm"
+            >
+              <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
               Interested
             </Button>
             <Button
               variant="outline"
-              className="flex-1"
+              className="w-full sm:flex-1"
               onClick={() => handleStatusUpdate("not-interested")}
               disabled={loading}
+              size="sm"
             >
-              <ThumbsDown className="h-4 w-4 mr-2" />
+              <ThumbsDown className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
               Pass
             </Button>
           </>
         )}
 
         {match.status === "interested" && (
-          <>
-            <Button className="flex-1" onClick={() => handleStatusUpdate("meeting-scheduled")} disabled={loading}>
-              <Calendar className="h-4 w-4 mr-2" />
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <Button 
+              className="w-full sm:flex-1" 
+              onClick={() => handleStatusUpdate("meeting-scheduled")} 
+              disabled={loading}
+              size="sm"
+            >
+              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
               Schedule Meeting
             </Button>
             <Link href={`/messages?match=${match.id}`}>
-              <Button variant="outline" size="sm">
-                <MessageSquare className="h-4 w-4" />
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 mr-2 sm:mr-0" />
+                <span className="sm:hidden">Message</span>
               </Button>
             </Link>
-          </>
+          </div>
         )}
 
         {match.status === "meeting-scheduled" && (
-          <Link href={`/messages?match=${match.id}`} className="flex-1">
-            <Button className="w-full">
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Message
+          <div className="flex gap-2 w-full">
+            <Link href={`/messages?match=${match.id}`} className="flex-1">
+              <Button className="w-full" size="sm">
+                <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                Message
+              </Button>
+            </Link>
+            <Link
+              href={
+                userType === "startup"
+                  ? `/investors/${profile?.slug || profile?.id}`
+                  : `/startups/${profile?.slug || profile?.id}`
+              }
+            >
+              <Button variant="outline" size="sm" className="px-3">
+                <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4" />
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {!isPending && match.status !== "interested" && match.status !== "meeting-scheduled" && (
+          <Link
+            href={
+              userType === "startup"
+                ? `/investors/${profile?.slug || profile?.id}`
+                : `/startups/${profile?.slug || profile?.id}`
+            }
+            className="w-full"
+          >
+            <Button variant="outline" size="sm" className="w-full">
+              <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+              View Profile
             </Button>
           </Link>
         )}
-
-        <Link
-          href={
-            userType === "startup"
-              ? `/investors/${profile?.slug || profile?.id}`
-              : `/startups/${profile?.slug || profile?.id}`
-          }
-        >
-          <Button variant="outline" size="sm">
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-        </Link>
       </CardFooter>
     </Card>
   )

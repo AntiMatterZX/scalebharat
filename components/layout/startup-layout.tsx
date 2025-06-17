@@ -113,52 +113,58 @@ export function StartupLayout({ children }: StartupLayoutProps) {
         
         {/* Enhanced Navigation Tabs */}
         <div className="border-b border-border">
-          <div className="px-4 sm:px-6">
-            <nav className="flex space-x-1 overflow-x-auto scrollbar-hide">
-              {navItems.map((item) => (
+          <div className="px-2 sm:px-4 lg:px-6 xl:px-8">
+            <div className="overflow-x-auto scrollbar-hide pb-2 pt-2">
+              <div className="inline-flex h-12 items-center justify-start rounded-xl bg-muted/50 p-1 text-muted-foreground gap-1 min-w-fit">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className={cn(
+                      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-fit relative",
+                      pathname === item.href
+                        ? "bg-background text-foreground shadow-md"
+                        : "hover:bg-background/50 hover:text-foreground"
+                    )}
+                  >
+                    <span className="flex-shrink-0">{item.icon}</span>
+                    <span className="ml-1.5 sm:ml-2 hidden sm:inline">{item.title}</span>
+                    <span className="ml-1.5 sm:hidden">{item.title.split(' ')[0]}</span>
+                    {item.badge && item.badge > 0 && (
+                      <span className="inline-flex items-center justify-center w-5 h-5 ml-1 sm:ml-2 text-xs font-medium text-primary-foreground bg-primary rounded-full">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+                {/* Settings Tab */}
                 <Link
-                  key={item.title}
-                  href={item.href}
+                  href="/startup/settings"
                   className={cn(
-                    "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
-                    pathname === item.href
-                      ? "text-foreground border-primary bg-accent/50"
-                      : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
+                    "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-w-fit",
+                    pathname === "/startup/settings"
+                      ? "bg-background text-foreground shadow-md"
+                      : "hover:bg-background/50 hover:text-foreground"
                   )}
                 >
-                  <span className="flex-shrink-0">{item.icon}</span>
-                  <span className="text-sm">{item.title}</span>
-                  {item.badge && (
-                    <span className="inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium text-primary-foreground bg-primary rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
+                  <span className="flex-shrink-0"><Settings className="h-4 w-4" /></span>
+                  <span className="ml-1.5 sm:ml-2 hidden sm:inline">Settings</span>
+                  <span className="ml-1.5 sm:hidden">Set</span>
                 </Link>
-              ))}
-              {/* Settings Tab */}
-              <Link
-                href="/startup/settings"
-                className={cn(
-                  "flex items-center space-x-2 px-3 py-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap min-w-fit",
-                  pathname === "/startup/settings"
-                    ? "text-foreground border-primary bg-accent/50"
-                    : "text-muted-foreground border-transparent hover:text-foreground hover:border-muted-foreground hover:bg-accent/30"
-                )}
-              >
-                <span className="flex-shrink-0"><Settings className="h-4 w-4" /></span>
-                <span className="text-sm">Settings</span>
-              </Link>
-            </nav>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden transition-colors duration-300">
-            <div className="p-6 sm:p-8">
-              {children}
+        <div className="w-full max-w-full px-2 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8">
+          <div className="max-w-[1920px] mx-auto">
+            <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden transition-colors duration-300">
+              <div className="p-3 sm:p-4 md:p-6 lg:p-8">
+                {children}
+              </div>
             </div>
           </div>
         </div>
