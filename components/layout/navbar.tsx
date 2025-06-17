@@ -311,7 +311,7 @@ const NavLeft = ({ setIsOpen, pathname, userType }: NavLeftProps) => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="block lg:hidden text-foreground text-2xl transition-colors duration-300"
+        className="flex items-center justify-center h-10 w-10 lg:hidden text-foreground text-2xl transition-colors duration-300 rounded-md hover:bg-accent"
         onClick={() => setIsOpen((pv) => !pv)}
       >
         <FiMenu />
@@ -508,7 +508,11 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
           stiffness: 300,
           mass: 0.8 
         }}
-        className="fixed top-16 left-0 right-0 bg-background border-b border-border shadow-xl z-[9999] lg:hidden max-h-[calc(100vh-4rem)] overflow-y-auto"
+        className="fixed top-16 left-0 right-0 bg-background border-b border-border shadow-xl z-[9999] lg:hidden"
+        style={{ 
+          height: 'calc(100vh - 4rem)',
+          maxHeight: 'calc(100vh - 4rem)'
+        }}
       >
         {/* Menu Header with Close Button */}
         <motion.div 
@@ -548,12 +552,21 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
           </Button>
         </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-          className="p-4 space-y-6"
-        >
+        <div className="flex flex-col" style={{ height: 'calc(100% - 73px)' }}>
+          {/* Scrollable content area */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
+            className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-4"
+            style={{ 
+              height: '100%',
+              paddingBottom: 'max(env(safe-area-inset-bottom), 2rem)',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
           {/* Public Navigation - Always visible */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -561,7 +574,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
             transition={{ delay: 0.25, duration: 0.3 }}
           >
             <h3 className="text-sm font-medium text-muted-foreground mb-3 px-2">Navigation</h3>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {publicRoutes.map((route, index) => (
                 <motion.div
                   key={route.href}
@@ -571,10 +584,10 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                 >
                   <Link href={route.href} onClick={() => setIsOpen(false)}>
                     <div 
-                      className={`w-full p-3 rounded-md border transition-colors ${
+                      className={`w-full p-3 rounded-lg border transition-colors touch-manipulation min-h-[2.5rem] flex items-center ${
                         route.href === pathname 
-                          ? "bg-primary text-primary-foreground border-primary" 
-                          : "bg-background hover:bg-accent border-border"
+                          ? "bg-primary text-primary-foreground border-primary shadow-md" 
+                          : "bg-background hover:bg-accent border-border active:bg-accent/80"
                       }`}
                     >
                       <span className="text-sm font-medium">{route.text}</span>
@@ -591,11 +604,11 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.3 }}
-              className="flex items-center gap-3 p-3 bg-accent/50 rounded-lg"
+              className="flex items-center gap-2.5 p-2.5 bg-accent/50 rounded-lg"
             >
-              <Avatar className="h-10 w-10 border-2 border-primary">
+              <Avatar className="h-8 w-8 border-2 border-primary">
                         <AvatarImage src={user.user_metadata?.profile_picture} alt={user.user_metadata?.full_name || user.email} />
-                <AvatarFallback className="bg-primary text-primary-foreground">
+                <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {user.user_metadata?.full_name?.[0] || user.email?.[0] || 'U'}
                         </AvatarFallback>
                       </Avatar>
@@ -623,7 +636,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
               transition={{ delay: 0.45, duration: 0.3 }}
             >
               <h3 className="text-sm font-medium text-muted-foreground mb-3 px-2">My Dashboard</h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {navigationItems.slice(0, 6).map((item, index) => (
                   <motion.div
                     key={item.href}
@@ -633,7 +646,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                   >
                     <Link href={item.href} onClick={() => setIsOpen(false)}>
                       <div 
-                        className={`w-full p-3 rounded-md border transition-colors flex items-center gap-3 ${
+                        className={`w-full p-2.5 rounded-md border transition-colors flex items-center gap-2.5 min-h-[2.5rem] ${
                           item.href === pathname 
                             ? "bg-primary text-primary-foreground border-primary" 
                             : "bg-background hover:bg-accent border-border"
@@ -659,12 +672,12 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.3 }}
-            className="border-t border-border pt-4"
+            className="border-t border-border pt-3"
           >
             {user ? (
               <div 
                         onClick={handleSignOut} 
-                className="w-full p-3 rounded-md border border-border bg-background hover:bg-accent transition-colors flex items-center gap-3 cursor-pointer"
+                className="w-full p-2.5 rounded-md border border-border bg-background hover:bg-accent transition-colors flex items-center gap-2.5 cursor-pointer min-h-[2.5rem]"
               >
                 <FiArrowRight className="h-4 w-4 flex-shrink-0 rotate-180" />
                 <div>
@@ -689,7 +702,8 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
               </div>
             )}
           </motion.div>
-        </motion.div>
+          </motion.div>
+        </div>
       </motion.div>
     </>
   );
