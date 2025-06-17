@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
+import { createRouteHandlerClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 import { redirect } from "next/navigation"
 
@@ -7,7 +6,7 @@ export const dynamic = "force-dynamic"
 
 export async function POST(request: Request, { params }: { params: { slug: string } }) {
   const slug = params.slug
-  const supabase = createRouteHandlerClient({ cookies })
+  const supabase = await createRouteHandlerClient()
 
   // Check if user is authenticated
   const {

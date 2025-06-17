@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient(cookies())
+    const supabase = await createRouteHandlerClient()
     const {
       data: { user },
       error: userError,
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient(cookies())
+    const supabase = await createRouteHandlerClient()
     const {
       data: { user },
       error: userError,

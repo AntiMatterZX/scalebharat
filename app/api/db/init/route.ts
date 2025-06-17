@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
+import { createRouteHandlerClient } from "@/lib/supabase/server"
 import { NextResponse } from "next/server"
 import fs from "fs"
 import path from "path"
@@ -8,7 +7,7 @@ export const dynamic = "force-dynamic"
 
 export async function GET() {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = await createRouteHandlerClient()
 
     // Read the SQL file
     const sqlPath = path.join(process.cwd(), "supabase", "user-type-schema.sql")

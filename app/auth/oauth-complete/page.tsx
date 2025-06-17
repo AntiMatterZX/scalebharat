@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,7 +12,7 @@ import { Building2, Lock, CheckCircle } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { cn } from '@/lib/utils'
 
-export default function OAuthCompletePage() {
+function OAuthCompleteContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -205,62 +205,53 @@ export default function OAuthCompletePage() {
                 </RadioGroup>
               </div>
 
-              {/* Password Field */}
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">
-                  Set Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground transform -translate-y-1/2" />
+              {/* Password Fields */}
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium flex items-center gap-2">
+                    <Lock className="h-4 w-4" />
+                    Set Password
+                  </Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Create a secure password"
+                    placeholder="Enter your password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10 h-11 text-sm"
                     required
-                    minLength={6}
+                    className="h-11"
                   />
                 </div>
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                  Confirm Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground transform -translate-y-1/2" />
+                
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                    Confirm Password
+                  </Label>
                   <Input
                     id="confirmPassword"
                     type="password"
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="pl-10 h-11 text-sm"
                     required
-                    minLength={6}
+                    className="h-11"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Password must be at least 6 characters long
-                </p>
               </div>
 
               {/* Submit Button */}
-              <Button 
-                type="submit" 
-                className="w-full h-11 text-sm font-medium" 
-                disabled={loading}
+              <Button
+                type="submit"
+                disabled={loading || !formData.password || !formData.confirmPassword || !formData.userType}
+                className="w-full h-11 text-sm font-medium"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    <span>Completing Setup...</span>
+                    <span>Setting up account...</span>
                   </div>
                 ) : (
-                  <span>Complete Registration</span>
+                  "Complete Setup"
                 )}
               </Button>
             </form>
@@ -268,5 +259,20 @@ export default function OAuthCompletePage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function OAuthCompletePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-primary/10 flex items-center justify-center p-3">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <OAuthCompleteContent />
+    </Suspense>
   )
 } 
