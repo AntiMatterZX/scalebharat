@@ -26,6 +26,33 @@ export function useUserProfile(): UserProfileData {
   })
 
   useEffect(() => {
+    const fetchProfileDataFromAPI = async () => {
+      try {
+        const response = await fetch('/api/user/profile')
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile from API')
+        }
+        const data = await response.json()
+        
+        setProfileData({
+          type: data.type,
+          status: data.status,
+          startupId: data.startupId,
+          investorId: data.investorId,
+          isComplete: data.isComplete,
+          isLoading: false,
+        })
+      } catch (error) {
+        console.error("Error fetching profile data from API:", error)
+        setProfileData({
+          type: null,
+          status: null,
+          isComplete: false,
+          isLoading: false,
+        })
+      }
+    }
+
     const fetchProfileData = async () => {
       if (!user) {
         setProfileData({
@@ -38,10 +65,42 @@ export function useUserProfile(): UserProfileData {
       }
 
       try {
-        // Check if user has admin role
-        const { data: userData } = await supabase.from("users").select("role").eq("id", user.id).single()
+        // Ensure we have a valid session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError)
+          // Fallback to API route
+          await fetchProfileDataFromAPI()
+          return
+        }
 
-        if (userData?.role === "admin" || userData?.role === "superadmin") {
+        if (!session) {
+          console.warn("No active session found")
+          // Fallback to API route
+          await fetchProfileDataFromAPI()
+          return
+        }
+
+        // Try to check if user has admin role (but don't fail if this doesn't work)
+        let isAdmin = false
+        try {
+          const { data: userRole, error: roleError } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", user.id)
+            .in("role", ["admin", "superadmin"])
+            .maybeSingle()
+
+          if (!roleError && userRole?.role) {
+            isAdmin = true
+          }
+          // Don't log errors for user_roles - many users won't have entries
+        } catch (error) {
+          // Silently ignore user_roles errors - this is expected for most users
+        }
+
+        if (isAdmin) {
           setProfileData({
             type: "admin",
             status: "active",
@@ -52,18 +111,54 @@ export function useUserProfile(): UserProfileData {
         }
 
         // Check if user has a startup profile
-        const { data: startup } = await supabase
-          .from("startups")
-          .select("id, status, company_name, description")
-          .eq("user_id", user.id)
-          .single()
+        let startup = null
+        let startupError: any = null
+        try {
+          const result = await supabase
+            .from("startups")
+            .select("id, status, company_name, description")
+            .eq("user_id", user.id)
+            .maybeSingle()
+          
+          startup = result.data
+          startupError = result.error
+        } catch (error) {
+          // Handle any unexpected errors
+          startupError = error
+        }
+
+        if (startupError && startupError.code !== 'PGRST116') {
+          // If we get an RLS error, fallback to API route
+          if (startupError.code === 'PGRST301' || (startupError.message && startupError.message.includes('406'))) {
+            await fetchProfileDataFromAPI()
+            return
+          }
+        }
 
         // Check if user has an investor profile
-        const { data: investor } = await supabase
-          .from("investors")
-          .select("id, status, firm_name, bio")
-          .eq("user_id", user.id)
-          .single()
+        let investor = null
+        let investorError: any = null
+        try {
+          const result = await supabase
+            .from("investors")
+            .select("id, status, firm_name, description")
+            .eq("user_id", user.id)
+            .maybeSingle()
+          
+          investor = result.data
+          investorError = result.error
+        } catch (error) {
+          // Handle any unexpected errors
+          investorError = error
+        }
+
+        if (investorError && investorError.code !== 'PGRST116') {
+          // If we get an RLS error, fallback to API route
+          if (investorError.code === 'PGRST301' || (investorError.message && investorError.message.includes('406'))) {
+            await fetchProfileDataFromAPI()
+            return
+          }
+        }
 
         if (startup) {
           // Check if startup profile is complete
@@ -78,7 +173,7 @@ export function useUserProfile(): UserProfileData {
           })
         } else if (investor) {
           // Check if investor profile is complete
-          const isComplete = Boolean(investor.firm_name && investor.bio)
+          const isComplete = Boolean(investor.firm_name && investor.description)
 
           setProfileData({
             type: "investor",
@@ -97,12 +192,8 @@ export function useUserProfile(): UserProfileData {
         }
       } catch (error) {
         console.error("Error fetching profile data:", error)
-        setProfileData({
-          type: null,
-          status: null,
-          isComplete: false,
-          isLoading: false,
-        })
+        // Fallback to API route
+        await fetchProfileDataFromAPI()
       }
     }
 

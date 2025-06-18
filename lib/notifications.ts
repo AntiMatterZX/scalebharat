@@ -1,258 +1,377 @@
 import { supabase } from "./supabase"
-import { sendEmail } from "./email/smtp"
-import { templates } from "./email/templates"
 
-export interface EmailNotification {
-  to: string
-  subject: string
-  template: string
-  data: Record<string, any>
+type EmailTemplateType = 'welcome' | 'new-match' | 'meeting-confirmation' | 'startup-approved' | 'startup-rejected' | 'profile-changes-submitted' | 'system'
+
+export interface NotificationData {
+  user_id: string
+  type: 'match' | 'message' | 'meeting' | 'system' | 'approval' | 'rejection' | 'profile_update'
+  title: string
+  content: string
+  data?: Record<string, any>
+  priority?: 'low' | 'medium' | 'high' | 'urgent'
+  action_url?: string
+  expires_at?: string
 }
 
-export async function sendNotification(notification: EmailNotification) {
-  try {
-    const { to, subject, template, data } = notification
+export interface EmailNotificationData {
+  template: EmailTemplateType
+  data: Record<string, any>
+  subject?: string
+}
 
-    // Get the template function
-    const templateFn = templates[template]
-    if (!templateFn) {
-      console.error(`Template "${template}" not found`)
+export class NotificationService {
+  /**
+   * Create a database notification
+   */
+  static async createNotification(notificationData: NotificationData): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from("notifications")
+        .insert({
+          user_id: notificationData.user_id,
+          type: notificationData.type,
+          title: notificationData.title,
+          content: notificationData.content,
+          data: notificationData.data || {},
+          priority: notificationData.priority || 'medium',
+          action_url: notificationData.action_url,
+          expires_at: notificationData.expires_at
+        })
+
+      if (error) {
+        console.error("Error creating notification:", error)
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error("Error in createNotification:", error)
       return false
     }
-
-    // Send email using SMTP
-    const result = await sendEmail({
-      to,
-      subject,
-      template: templateFn,
-      data,
-    })
-
-    return result
-  } catch (error) {
-    console.error("Error sending notification:", error)
-    return false
   }
-}
 
-export async function notifyNewMatch(startupUserId: string, investorUserId: string, matchScore: number) {
-  try {
-    // Get user emails and details
-    const { data: users } = await supabase
-      .from("users")
-      .select("id, email, first_name, user_type")
-      .in("id", [startupUserId, investorUserId])
-
-    if (!users || users.length !== 2) return
-
-    // Get startup and investor profiles
-    const startupUser = users.find((user) => user.user_type === "startup")
-    const investorUser = users.find((user) => user.user_type === "investor")
-
-    if (!startupUser || !investorUser) return
-
-    // Get additional profile information
-    const { data: startupProfile } = await supabase
-      .from("startup_profiles")
-      .select("company_name, short_description")
-      .eq("user_id", startupUser.id)
-      .single()
-
-    const { data: investorProfile } = await supabase
-      .from("investor_profiles")
-      .select("firm_name, investment_focus")
-      .eq("user_id", investorUser.id)
-      .single()
-
-    // Send notifications to both parties
-    await Promise.all([
-      sendNotification({
-        to: startupUser.email,
-        subject: "New Investor Match!",
-        template: "new-match",
-        data: {
-          userName: startupUser.first_name,
-          matchScore,
-          type: "startup",
-          matchName: investorProfile?.firm_name || "Investor",
-          matchDescription: investorProfile?.investment_focus || "",
-        },
-      }),
-      sendNotification({
-        to: investorUser.email,
-        subject: "New Startup Match!",
-        template: "new-match",
-        data: {
-          userName: investorUser.first_name,
-          matchScore,
-          type: "investor",
-          matchName: startupProfile?.company_name || "Startup",
-          matchDescription: startupProfile?.short_description || "",
-        },
-      }),
-    ])
-  } catch (error) {
-    console.error("Error sending match notifications:", error)
+  /**
+   * Send email notification
+   */
+  static async sendEmailNotification(
+    to: string,
+    emailData: EmailNotificationData
+  ): Promise<boolean> {
+    try {
+      const subject = emailData.subject || emailData.data.subject || "Notification from ScaleBharat"
+      
+      // Use fetch to call email API to avoid module resolution issues
+      const response = await fetch('/api/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to,
+          subject,
+          template: emailData.template,
+          data: emailData.data
+        })
+      })
+      
+      return response.ok
+    } catch (error) {
+      console.error("Error sending email notification:", error)
+      return false
+    }
   }
-}
 
-export async function sendWelcomeEmail(userId: string) {
-  try {
-    // Get user details
-    const { data: user } = await supabase.from("users").select("email, first_name, user_type").eq("id", userId).single()
+  /**
+   * Create both database and email notification
+   */
+  static async createFullNotification(
+    userEmail: string,
+    notificationData: NotificationData,
+    emailData?: EmailNotificationData
+  ): Promise<{ dbSuccess: boolean; emailSuccess: boolean }> {
+    const dbSuccess = await this.createNotification(notificationData)
+    
+    let emailSuccess = true
+    if (emailData) {
+      emailSuccess = await this.sendEmailNotification(userEmail, emailData)
+    }
 
-    if (!user) return
+    return { dbSuccess, emailSuccess }
+  }
 
-    await sendNotification({
-      to: user.email,
-      subject: "Welcome to Startup Directory!",
-      template: "welcome",
+  // Specific notification methods for different events
+
+  /**
+   * Welcome notification for new users
+   */
+  static async sendWelcomeNotification(
+    userId: string,
+    userEmail: string,
+    userData: { firstName: string; userType: string }
+  ) {
+    const notificationData: NotificationData = {
+      user_id: userId,
+      type: 'system',
+      title: '🎉 Welcome to ScaleBharat!',
+      content: `Welcome ${userData.firstName}! Complete your profile to start connecting with ${userData.userType === 'startup' ? 'investors' : 'startups'}.`,
+      priority: 'high',
+      action_url: '/dashboard'
+    }
+
+    const emailData: EmailNotificationData = {
+      template: 'welcome',
       data: {
-        userName: user.first_name,
-        userType: user.user_type,
-      },
-    })
+        name: userData.firstName,
+        userType: userData.userType,
+        loginUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+      }
+    }
+
+    return await this.createFullNotification(userEmail, notificationData, emailData)
+  }
+
+  /**
+   * New match notification
+   */
+  static async sendMatchNotification(
+    userId: string,
+    userEmail: string,
+    matchData: {
+      recipientName: string
+      matchName: string
+      matchType: string
+      matchScore: number
+      profileUrl: string
+    }
+  ) {
+    const notificationData: NotificationData = {
+      user_id: userId,
+      type: 'match',
+      title: '🎯 New Match Found!',
+      content: `You have a new ${matchData.matchScore}% match with ${matchData.matchName}`,
+      priority: 'high',
+      action_url: matchData.profileUrl,
+      data: matchData
+    }
+
+    const emailData: EmailNotificationData = {
+      template: 'new-match',
+      data: matchData
+    }
+
+    return await this.createFullNotification(userEmail, notificationData, emailData)
+  }
+
+  /**
+   * Meeting confirmation notification
+   */
+  static async sendMeetingNotification(
+    userId: string,
+    userEmail: string,
+    meetingData: {
+      recipientName: string
+      meetingTitle: string
+      meetingDate: string
+      meetingTime: string
+      meetingLink?: string
+      organizerName: string
+    }
+  ) {
+    const notificationData: NotificationData = {
+      user_id: userId,
+      type: 'meeting',
+      title: '📅 Meeting Confirmed',
+      content: `Your meeting "${meetingData.meetingTitle}" is confirmed for ${meetingData.meetingDate} at ${meetingData.meetingTime}`,
+      priority: 'high',
+      action_url: '/meetings',
+      data: meetingData
+    }
+
+    const emailData: EmailNotificationData = {
+      template: 'meeting-confirmation',
+      data: meetingData
+    }
+
+    return await this.createFullNotification(userEmail, notificationData, emailData)
+  }
+
+  /**
+   * Startup approval notification
+   */
+  static async sendStartupApprovalNotification(
+    userId: string,
+    userEmail: string,
+    approvalData: {
+      founderName: string
+      startupName: string
+      profileUrl: string
+      dashboardUrl: string
+      changesApplied?: string[]
+    }
+  ) {
+    const notificationData: NotificationData = {
+      user_id: userId,
+      type: 'approval',
+      title: '🎉 Startup Profile Approved!',
+      content: `Congratulations! Your startup "${approvalData.startupName}" has been approved and is now live.`,
+      priority: 'urgent',
+      action_url: approvalData.profileUrl,
+      data: approvalData
+    }
+
+    const emailData: EmailNotificationData = {
+      template: 'startup-approved',
+      data: approvalData
+    }
+
+    return await this.createFullNotification(userEmail, notificationData, emailData)
+  }
+
+  /**
+   * Startup rejection notification
+   */
+  static async sendStartupRejectionNotification(
+    userId: string,
+    userEmail: string,
+    rejectionData: {
+      founderName: string
+      startupName: string
+      rejectionReason: string
+      resubmitUrl: string
+      supportEmail: string
+    }
+  ) {
+    const notificationData: NotificationData = {
+      user_id: userId,
+      type: 'rejection',
+      title: '📝 Profile Updates Needed',
+      content: `Your startup profile needs some updates. Please review the feedback and resubmit.`,
+      priority: 'high',
+      action_url: rejectionData.resubmitUrl,
+      data: rejectionData
+    }
+
+    const emailData: EmailNotificationData = {
+      template: 'startup-rejected',
+      data: rejectionData
+    }
+
+    return await this.createFullNotification(userEmail, notificationData, emailData)
+  }
+
+  /**
+   * Profile changes submitted notification
+   */
+  static async sendProfileChangesSubmittedNotification(
+    userId: string,
+    userEmail: string,
+    submissionData: {
+      founderName: string
+      startupName: string
+      submissionDate: string
+      changesSubmitted: string[]
+      dashboardUrl: string
+    }
+  ) {
+    const notificationData: NotificationData = {
+      user_id: userId,
+      type: 'profile_update',
+      title: '✅ Profile Changes Submitted',
+      content: `Your profile changes have been submitted for review. We'll notify you once they're approved.`,
+      priority: 'medium',
+      action_url: submissionData.dashboardUrl,
+      data: submissionData
+    }
+
+    const emailData: EmailNotificationData = {
+      template: 'profile-changes-submitted',
+      data: submissionData
+    }
+
+    return await this.createFullNotification(userEmail, notificationData, emailData)
+  }
+
+  /**
+   * Mark notifications as read
+   */
+  static async markNotificationsAsRead(
+    userId: string,
+    notificationIds: string[]
+  ): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from("notifications")
+        .update({ is_read: true })
+        .in("id", notificationIds)
+        .eq("user_id", userId)
+
+      if (error) {
+        console.error("Error marking notifications as read:", error)
+        return false
+      }
 
     return true
   } catch (error) {
-    console.error("Error sending welcome email:", error)
+      console.error("Error in markNotificationsAsRead:", error)
     return false
   }
 }
 
-export async function sendPasswordResetEmail(email: string, resetLink: string) {
-  try {
-    // Get user details
-    const { data: user } = await supabase.from("users").select("first_name").eq("email", email).single()
+  /**
+   * Get user notifications
+   */
+  static async getUserNotifications(
+    userId: string,
+    options: {
+      limit?: number
+      unreadOnly?: boolean
+      type?: string
+    } = {}
+  ) {
+    try {
+      let query = supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .or("expires_at.is.null,expires_at.gte.now()")
+        .order("created_at", { ascending: false })
 
-    if (!user) return false
+      if (options.limit) {
+        query = query.limit(options.limit)
+      }
 
-    await sendNotification({
-      to: email,
-      subject: "Reset Your Password",
-      template: "password-reset",
-      data: {
-        userName: user.first_name,
-        resetLink,
-      },
-    })
+      if (options.unreadOnly) {
+        query = query.eq("is_read", false)
+      }
 
-    return true
+      if (options.type) {
+        query = query.eq("type", options.type)
+      }
+
+      const { data, error } = await query
+
+      if (error) {
+        console.error("Error fetching notifications:", error)
+        return []
+      }
+
+      return data || []
   } catch (error) {
-    console.error("Error sending password reset email:", error)
-    return false
+      console.error("Error in getUserNotifications:", error)
+      return []
+    }
   }
 }
 
-export async function sendMilestoneUpdateEmail(startupId: string, milestoneName: string, milestoneDescription: string) {
-  try {
-    // Get startup details
-    const { data: startup } = await supabase
-      .from("startup_profiles")
-      .select("user_id, company_name")
-      .eq("id", startupId)
-      .single()
-
-    if (!startup) return
-
-    // Get all investors who have matched with this startup
-    const { data: matches } = await supabase
-      .from("matches")
-      .select("investor_user_id")
-      .eq("startup_user_id", startup.user_id)
-
-    if (!matches || matches.length === 0) return
-
-    // Get investor emails
-    const investorIds = matches.map((match) => match.investor_user_id)
-    const { data: investors } = await supabase.from("users").select("id, email, first_name").in("id", investorIds)
-
-    if (!investors || investors.length === 0) return
-
-    // Send emails to all matched investors
-    const startupProfileLink = `${process.env.NEXT_PUBLIC_APP_URL}/startups/${startupId}`
-
-    await Promise.all(
-      investors.map((investor) =>
-        sendNotification({
-          to: investor.email,
-          subject: `${startup.company_name} Reached a New Milestone!`,
-          template: "milestone-update",
-          data: {
-            userName: investor.first_name,
-            startupName: startup.company_name,
-            milestoneName,
-            milestoneDescription,
-            startupProfileLink,
-          },
-        }),
-      ),
-    )
-
-    return true
-  } catch (error) {
-    console.error("Error sending milestone update emails:", error)
-    return false
-  }
-}
-
-export async function sendMeetingConfirmationEmail(meetingId: string) {
-  try {
-    // Get meeting details
-    const { data: meeting } = await supabase.from("meetings").select("*").eq("id", meetingId).single()
-
-    if (!meeting) return
-
-    // Get user details for both parties
-    const { data: users } = await supabase
-      .from("users")
-      .select("id, email, first_name, last_name")
-      .in("id", [meeting.requester_id, meeting.recipient_id])
-
-    if (!users || users.length !== 2) return
-
-    const requester = users.find((user) => user.id === meeting.requester_id)
-    const recipient = users.find((user) => user.id === meeting.recipient_id)
-
-    if (!requester || !recipient) return
-
-    // Send confirmation emails to both parties
-    await Promise.all([
-      sendNotification({
-        to: requester.email,
-        subject: "Meeting Confirmation",
-        template: "meeting-confirmation",
-        data: {
-          userName: requester.first_name,
-          otherPartyName: `${recipient.first_name} ${recipient.last_name}`,
-          meetingDate: meeting.meeting_date,
-          meetingTime: meeting.meeting_time,
-          meetingDuration: meeting.duration,
-          meetingType: meeting.meeting_type,
-          meetingLink: meeting.meeting_link,
-          meetingNotes: meeting.notes,
-        },
-      }),
-      sendNotification({
-        to: recipient.email,
-        subject: "Meeting Confirmation",
-        template: "meeting-confirmation",
-        data: {
-          userName: recipient.first_name,
-          otherPartyName: `${requester.first_name} ${requester.last_name}`,
-          meetingDate: meeting.meeting_date,
-          meetingTime: meeting.meeting_time,
-          meetingDuration: meeting.duration,
-          meetingType: meeting.meeting_type,
-          meetingLink: meeting.meeting_link,
-          meetingNotes: meeting.notes,
-        },
-      }),
-    ])
-
-    return true
-  } catch (error) {
-    console.error("Error sending meeting confirmation emails:", error)
-    return false
-  }
-}
+// Export convenience functions
+export const {
+  createNotification,
+  sendEmailNotification,
+  createFullNotification,
+  sendWelcomeNotification,
+  sendMatchNotification,
+  sendMeetingNotification,
+  sendStartupApprovalNotification,
+  sendStartupRejectionNotification,
+  sendProfileChangesSubmittedNotification,
+  markNotificationsAsRead,
+  getUserNotifications
+} = NotificationService

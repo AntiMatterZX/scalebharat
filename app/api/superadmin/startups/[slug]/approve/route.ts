@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/server"
 import { logError } from "@/lib/error-handling"
-import { sendEmail } from "@/lib/email"
+import { sendEmail } from "@/lib/email/smtp"
 import { startupApprovedTemplate } from "@/lib/email/templates/startup-approved"
 import { startupRejectedTemplate } from "@/lib/email/templates/startup-rejected"
 import { generateSlug, ensureUniqueSlug } from "@/lib/slug-utils"
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
       },
     })
 
-    // Send notification email
+    // Send notification email and create dashboard notification
     try {
       const user = startup.users
       if (user?.email) {
@@ -111,23 +111,57 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
           await sendEmail({
             to: user.email,
             subject: "🎉 Your startup has been approved!",
-            html: startupApprovedTemplate({
+            template: (data: any) => startupApprovedTemplate(data),
+            data: {
               firstName: user.first_name,
               companyName: startup.company_name,
               dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/startup/dashboard`,
               profileUrl: `${process.env.NEXT_PUBLIC_APP_URL}/startups/${newSlug}`,
-            }),
+            },
+          })
+
+          // Create dashboard notification
+          await supabase.rpc('create_notification', {
+            p_user_id: user.id,
+            p_type: 'approval',
+            p_title: '🎉 Startup Approved!',
+            p_content: `Your startup ${startup.company_name} has been approved and is now live on our platform.`,
+            p_data: {
+              startup_id: startup.id,
+              company_name: startup.company_name,
+              slug: newSlug
+            },
+            p_priority: 'high',
+            p_action_url: '/startup/dashboard',
+            p_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
           })
         } else if (action === "reject") {
           await sendEmail({
             to: user.email,
             subject: "Update on your startup submission",
-            html: startupRejectedTemplate({
+            template: (data: any) => startupRejectedTemplate(data),
+            data: {
               firstName: user.first_name,
               companyName: startup.company_name,
               reason: reason || "Please review and resubmit your application.",
               resubmitUrl: `${process.env.NEXT_PUBLIC_APP_URL}/startup/profile`,
-            }),
+            },
+          })
+
+          // Create dashboard notification
+          await supabase.rpc('create_notification', {
+            p_user_id: user.id,
+            p_type: 'rejection',
+            p_title: '📝 Profile Update Required',
+            p_content: `Your startup submission needs revision: ${reason || 'Please review and update your profile.'}`,
+            p_data: {
+              startup_id: startup.id,
+              company_name: startup.company_name,
+              rejection_reason: reason
+            },
+            p_priority: 'high',
+            p_action_url: '/startup/profile',
+            p_expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days
           })
         }
       }

@@ -30,6 +30,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import type { Database } from "@/types/database"
 import { useToast } from "@/components/ui/use-toast"
+import { NotificationBanner } from "@/components/ui/notifications"
 import { useRouter } from "next/navigation"
 import { FileUpload } from "@/components/ui/file-upload"
 import { useForm } from "react-hook-form"
@@ -197,6 +198,9 @@ export default function StartupDashboardPage() {
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 sm:space-y-8">
+      {/* Notification Banner */}
+      <NotificationBanner />
+      
       {/* Enhanced Mobile-First Header */}
       <div className="space-y-4 sm:space-y-6">
         <div className="flex flex-col gap-4 sm:gap-6">

@@ -65,16 +65,30 @@ export function usePendingEdits(startupId?: string): UsePendingEditsResult {
 
     try {
       const response = await fetch(`/api/startup/pending-edits?startup_id=${startupId}`)
-      const data = await response.json()
-
+      
       if (!response.ok) {
+        // If it's a server error, don't throw - just log and continue
+        if (response.status >= 500) {
+          console.warn(`Server error fetching pending edits (${response.status}). Continuing without pending edits.`)
+          setPendingEdit(null)
+          return
+        }
+        
+        const data = await response.json()
         throw new Error(data.error || 'Failed to fetch pending edits')
       }
 
+      const data = await response.json()
       setPendingEdit(data.pending_edit)
     } catch (err: any) {
-      setError(err.message || 'Failed to check pending edits')
-      console.error('Error checking pending edits:', err)
+      // Don't set error state for server errors - just log them
+      if (err.message && err.message.includes('500')) {
+        console.warn('Server error fetching pending edits. Continuing without pending edits.')
+        setPendingEdit(null)
+      } else {
+        setError(err.message || 'Failed to check pending edits')
+        console.error('Error checking pending edits:', err)
+      }
     } finally {
       setLoading(false)
     }

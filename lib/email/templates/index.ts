@@ -3,6 +3,10 @@ import { welcomeTemplate } from "./welcome"
 import { passwordResetTemplate } from "./password-reset"
 import { milestoneUpdateTemplate } from "./milestone-update"
 import { meetingConfirmationTemplate } from "./meeting-confirmation"
+import { startupApprovedTemplate } from "./startup-approved"
+import { startupRejectedTemplate } from "./startup-rejected"
+import { profileChangesSubmittedTemplate } from "./profile-changes-submitted"
+import { systemTemplate } from "./system"
 
 export type EmailTemplate = (data: Record<string, any>) => string
 
@@ -12,6 +16,10 @@ export const templates = {
   "password-reset": passwordResetTemplate,
   "milestone-update": milestoneUpdateTemplate,
   "meeting-confirmation": meetingConfirmationTemplate,
+  "startup-approved": startupApprovedTemplate,
+  "startup-rejected": startupRejectedTemplate,
+  "profile-changes-submitted": profileChangesSubmittedTemplate,
+  system: systemTemplate,
 }
 
 export {
@@ -20,4 +28,8 @@ export {
   passwordResetTemplate,
   milestoneUpdateTemplate,
   meetingConfirmationTemplate,
+  startupApprovedTemplate,
+  startupRejectedTemplate,
+  profileChangesSubmittedTemplate,
+  systemTemplate,
 }

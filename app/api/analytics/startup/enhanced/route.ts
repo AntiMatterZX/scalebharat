@@ -248,9 +248,10 @@ function processInvestorEngagement(data: any[]) {
 
 function getInvestmentRangeLabel(min?: number, max?: number): string {
   if (!min && !max) return 'Unspecified'
-  if (!max) return `$${formatCurrency(min)}+`
-  if (!min) return `Up to $${formatCurrency(max)}`
-  return `$${formatCurrency(min)} - $${formatCurrency(max)}`
+  if (!max && min) return `$${formatCurrency(min)}+`
+  if (!min && max) return `Up to $${formatCurrency(max)}`
+  if (min && max) return `$${formatCurrency(min)} - $${formatCurrency(max)}`
+  return 'Unspecified'
 }
 
 function formatCurrency(amount: number): string {
@@ -334,8 +335,8 @@ function generateInsights(metrics: any, funnel: any[], engagement: any) {
   }
 
   // Conversion funnel insight
-  const bottleneck = findConversionBottleneck(funnel)
-  if (bottleneck) {
+  const bottleneck = findConversionBottleneck(funnel) as any
+  if (bottleneck && bottleneck.drop_off_rate > 0) {
     insights.push({
       type: 'warning',
       title: 'Conversion Bottleneck',

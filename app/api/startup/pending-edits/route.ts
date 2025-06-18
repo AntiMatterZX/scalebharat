@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/server"
 import { logError } from "@/lib/error-handling"
+import { sendEmail } from "@/lib/email/smtp"
+import { profileChangesSubmittedTemplate } from "@/lib/email/templates/profile-changes-submitted"
 
 export async function GET(request: NextRequest) {
   try {
@@ -136,6 +138,58 @@ export async function POST(request: NextRequest) {
         await supabase.from("startup_pending_edits").delete().eq("id", pendingEdit.id)
         throw docError
       }
+    }
+
+    // Send confirmation email and create dashboard notification
+    try {
+      // Get user information
+      const { data: user } = await supabase
+        .from("users")
+        .select("first_name, email")
+        .eq("id", user_id)
+        .single()
+
+      // Get startup information
+      const { data: startup } = await supabase
+        .from("startups")
+        .select("company_name")
+        .eq("id", startup_id)
+        .single()
+
+      if (user?.email && startup?.company_name) {
+        // Send confirmation email
+        await sendEmail({
+          to: user.email,
+          subject: "Profile Changes Submitted for Review",
+          template: (data: any) => profileChangesSubmittedTemplate(data),
+          data: {
+            firstName: user.first_name || "there",
+            companyName: startup.company_name,
+            changesSubmitted: changes_summary || "Profile updates submitted",
+            dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/startup/dashboard`,
+          },
+        })
+
+        // Create dashboard notification
+        await supabase.rpc('create_notification', {
+          p_user_id: user_id,
+          p_type: 'profile_update',
+          p_title: '📋 Profile Changes Submitted',
+          p_content: `Your profile changes have been submitted for review and will be processed within 24-48 hours.`,
+          p_data: {
+            pending_edit_id: pendingEdit.id,
+            startup_id: startup_id,
+            company_name: startup.company_name,
+            changes_summary: changes_summary
+          },
+          p_priority: 'medium',
+          p_action_url: '/startup/dashboard',
+          p_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
+        })
+      }
+    } catch (notificationError) {
+      console.error("Failed to send confirmation notifications:", notificationError)
+      // Don't fail the main request if notifications fail
     }
 
     return NextResponse.json({

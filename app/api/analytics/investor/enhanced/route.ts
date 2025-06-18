@@ -430,8 +430,8 @@ function generateInvestorInsights(metrics: any, funnel: any[], portfolio: any, d
   }
 
   // Conversion insight
-  const bottleneck = findConversionBottleneck(funnel)
-  if (bottleneck) {
+  const bottleneck = findConversionBottleneck(funnel) as any
+  if (bottleneck && bottleneck.drop_off_rate > 0) {
     insights.push({
       type: 'info',
       title: 'Conversion Opportunity',
@@ -473,7 +473,7 @@ function generateInvestorRecommendations(metrics: any, funnel: any[], portfolio:
 
   // Portfolio diversification
   if (portfolio.companies.length > 0) {
-    const industries = [...new Set(portfolio.companies.map((c: any) => c.industry))]
+    const industries = Array.from(new Set(portfolio.companies.map((c: any) => c.industry)))
     if (industries.length < 3) {
       recommendations.push({
         priority: 'low',
@@ -488,7 +488,7 @@ function generateInvestorRecommendations(metrics: any, funnel: any[], portfolio:
   return recommendations
 }
 
-function findConversionBottleneck(funnel: any[]) {
+function findConversionBottleneck(funnel: any[]): any | null {
   let maxDropOff = 0
   let bottleneck = null
 

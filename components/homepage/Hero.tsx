@@ -38,7 +38,7 @@ const Hero = () => {
             The <span className="font-semibold text-foreground">modern platform</span> connecting innovative startups with the right investors.
             <br className="hidden sm:block" />
             <span className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground/80 block mt-2 sm:mt-0 sm:inline">
-              Real-time matching, AI-powered recommendations, and seamless funding workflows.
+            Real-time matching, AI-powered recommendations, and seamless funding workflows.
             </span>
           </p>
 
@@ -71,11 +71,11 @@ const Hero = () => {
               <div key={stat.label} className="text-center group">
                 <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gradient mb-1 sm:mb-2 group-hover:scale-110 transition-transform duration-300">
                   {stat.number}
-                </div>
+            </div>
                 <div className="text-xs sm:text-sm lg:text-base text-muted-foreground font-medium">
                   {stat.label}
-                </div>
-              </div>
+            </div>
+            </div>
             ))}
           </div>
 

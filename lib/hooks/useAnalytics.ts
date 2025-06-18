@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, ReactNode } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -13,6 +13,8 @@ export interface AnalyticsMetric {
 }
 
 export interface ConversionFunnelStep {
+  stage: ReactNode
+  percentage: any
   step_name: string
   step_order: number
   count: number
@@ -40,6 +42,7 @@ export interface AnalyticsData {
   metrics: AnalyticsMetric[]
   conversionFunnel: ConversionFunnelStep[]
   timeSeriesData: {
+    length: number
     profileViews: TimeSeriesData[]
     matches: TimeSeriesData[]
     meetings: TimeSeriesData[]
@@ -67,7 +70,8 @@ export function useAnalytics(options: UseAnalyticsOptions) {
     timeSeriesData: {
       profileViews: [],
       matches: [],
-      meetings: []
+      meetings: [],
+      length: 0
     },
     realTimeMetrics: {
       active_users_5min: 0,
@@ -199,7 +203,8 @@ export function useAnalytics(options: UseAnalyticsOptions) {
         timeSeriesData: {
           profileViews: profileViewsResponse.data || [],
           matches: matchesResponse.data || [],
-          meetings: meetingsResponse.data || []
+          meetings: meetingsResponse.data || [],
+          length: (profileViewsResponse.data || []).length + (matchesResponse.data || []).length + (meetingsResponse.data || []).length
         },
         realTimeMetrics: {
           ...prev.realTimeMetrics,

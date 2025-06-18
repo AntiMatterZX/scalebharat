@@ -35,6 +35,7 @@ import {
   UserCheck,
   MailIcon
 } from 'lucide-react';
+import { NotificationCenter } from '@/components/ui/notifications';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -370,6 +371,9 @@ const NavRight = ({ user, userType, profileLoading, navigationItems, handleSignO
     <div className="flex items-center gap-3">
       {/* Theme Toggle */}
       <ThemeToggle variant="ghost" size="sm" />
+      
+      {/* Notifications - only show for authenticated users */}
+      {user && <NotificationCenter />}
       
       {/* Auth Section */}
       {user ? (

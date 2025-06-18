@@ -113,16 +113,16 @@ export default function StartupProfilePage() {
     return (
       <div className="w-full max-w-4xl mx-auto">
         <Alert variant="destructive" className="mt-4 sm:mt-8">
-          <AlertCircle className="h-4 w-4" />
+        <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex flex-col sm:flex-row sm:items-center gap-2">
             <span>{error}</span>
-            {error.includes("not found") && (
+          {error.includes("not found") && (
               <Button asChild size="sm" className="w-fit">
-                <Link href="/onboarding/startup">Complete Profile</Link>
-              </Button>
-            )}
-          </AlertDescription>
-        </Alert>
+              <Link href="/onboarding/startup">Complete Profile</Link>
+            </Button>
+          )}
+        </AlertDescription>
+      </Alert>
       </div>
     )
   }
@@ -164,8 +164,8 @@ export default function StartupProfilePage() {
               <TrendingUp className="h-4 w-4 mr-2" />
               <span className="sm:hidden">Analytics</span>
               <span className="hidden sm:inline">View Analytics</span>
-            </Link>
-          </Button>
+          </Link>
+        </Button>
         </div>
       </div>
 
@@ -196,12 +196,12 @@ export default function StartupProfilePage() {
                 <div className="space-y-1.5 lg:space-y-2">
                   <CardTitle className="flex items-center text-lg sm:text-xl lg:text-2xl">
                     <Building2 className="mr-2 lg:mr-3 h-5 w-5 lg:h-6 lg:w-6 text-primary flex-shrink-0" />
-                    Basic Information
-                  </CardTitle>
+              Basic Information
+            </CardTitle>
                   <CardDescription className="text-sm lg:text-base text-muted-foreground">
                     Core details about your company that define your startup.
                   </CardDescription>
-                </div>
+          </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -215,14 +215,14 @@ export default function StartupProfilePage() {
                       Pending Review
                     </>
                   ) : (
-                    <Link href={editSectionPath("")}>
+            <Link href={editSectionPath("")}>
                       <Edit3 className="mr-1.5 h-3 w-3 lg:h-4 lg:w-4" />
-                      Edit
-                    </Link>
+              Edit
+            </Link>
                   )}
-                </Button>
+          </Button>
               </div>
-            </CardHeader>
+        </CardHeader>
             <CardContent className="space-y-6 lg:space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 lg:gap-x-8 gap-y-4 lg:gap-y-6">
                 <DataDisplayItem label="Company Name" value={startupProfile?.company_name} />
@@ -243,15 +243,15 @@ export default function StartupProfilePage() {
                         src={startupProfile?.logo || "/placeholder.svg"}
                         alt={`${startupProfile?.company_name} logo`}
                         className="h-16 sm:h-20 lg:h-24 w-auto rounded-lg border border-border p-2 bg-muted shadow-sm"
-                      />
+              />
                     <div className="text-sm text-muted-foreground">
                       <p>Logo displayed on your public profile</p>
                     </div>
                   </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
           {/* Enhanced Company Details Card */}
           <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -260,12 +260,12 @@ export default function StartupProfilePage() {
                 <div className="space-y-1.5 lg:space-y-2">
                   <CardTitle className="flex items-center text-lg sm:text-xl lg:text-2xl">
                     <Info className="mr-2 lg:mr-3 h-5 w-5 lg:h-6 lg:w-6 text-primary flex-shrink-0" />
-                    Company Details
-                  </CardTitle>
+              Company Details
+            </CardTitle>
                   <CardDescription className="text-sm lg:text-base text-muted-foreground">
                     Operational metrics and market positioning information.
                   </CardDescription>
-                </div>
+          </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -279,23 +279,23 @@ export default function StartupProfilePage() {
                       Pending Review
                     </>
                   ) : (
-                    <Link href={editSectionPath("company")}>
+            <Link href={editSectionPath("company")}>
                       <Edit3 className="mr-1.5 h-3 w-3 lg:h-4 lg:w-4" />
-                      Edit
-                    </Link>
+              Edit
+            </Link>
                   )}
-                </Button>
+          </Button>
               </div>
-            </CardHeader>
+        </CardHeader>
             <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 lg:gap-x-8 gap-y-4 lg:gap-y-6">
-              <DataDisplayItem label="Stage" value={startupProfile.stage} />
-              <DataDisplayItem label="Industries" value={startupProfile.industry} />
-              <DataDisplayItem label="Business Model" value={startupProfile.business_model} />
+          <DataDisplayItem label="Stage" value={startupProfile.stage} />
+          <DataDisplayItem label="Industries" value={startupProfile.industry} />
+          <DataDisplayItem label="Business Model" value={startupProfile.business_model} />
               <DataDisplayItem label="Growth Rate (%)" value={startupProfile.growth_rate} />
-              <DataDisplayItem label="Annual Revenue (USD)" value={startupProfile.revenue?.toLocaleString()} />
-              <DataDisplayItem label="Number of Users/Customers" value={startupProfile.users_count?.toLocaleString()} />
-            </CardContent>
-          </Card>
+          <DataDisplayItem label="Annual Revenue (USD)" value={startupProfile.revenue?.toLocaleString()} />
+          <DataDisplayItem label="Number of Users/Customers" value={startupProfile.users_count?.toLocaleString()} />
+        </CardContent>
+      </Card>
 
           {/* Enhanced Funding Information Card */}
           <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -304,12 +304,12 @@ export default function StartupProfilePage() {
                 <div className="space-y-1.5 lg:space-y-2">
                   <CardTitle className="flex items-center text-lg sm:text-xl lg:text-2xl">
                     <DollarSign className="mr-2 lg:mr-3 h-5 w-5 lg:h-6 lg:w-6 text-primary flex-shrink-0" />
-                    Funding Information
-                  </CardTitle>
+              Funding Information
+            </CardTitle>
                   <CardDescription className="text-sm lg:text-base text-muted-foreground">
                     Investment status, goals, and financial projections.
                   </CardDescription>
-                </div>
+          </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -323,33 +323,33 @@ export default function StartupProfilePage() {
                       Pending Review
                     </>
                   ) : (
-                    <Link href={editSectionPath("funding")}>
+            <Link href={editSectionPath("funding")}>
                       <Edit3 className="mr-1.5 h-3 w-3 lg:h-4 lg:w-4" />
-                      Edit
-                    </Link>
+              Edit
+            </Link>
                   )}
-                </Button>
+          </Button>
               </div>
-            </CardHeader>
+        </CardHeader>
             <CardContent className="space-y-6 lg:space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 lg:gap-x-8 gap-y-4 lg:gap-y-6">
-                <DataDisplayItem label="Current Funding Round" value={startupProfile.current_round} />
+          <DataDisplayItem label="Current Funding Round" value={startupProfile.current_round} />
                 <DataDisplayItem label="Fundraising Timeline (Months)" value={startupProfile.fundraising_timeline_months} />
-                <DataDisplayItem label="Total Raised (USD)" value={startupProfile.total_raised?.toLocaleString()} />
-                <DataDisplayItem label="Target Amount (USD)" value={startupProfile.target_amount?.toLocaleString()} />
-                <DataDisplayItem label="Valuation (USD)" value={startupProfile.valuation?.toLocaleString()} />
-                <DataDisplayItem label="Equity Offered (%)" value={startupProfile.equity_percentage_offered} />
-                <DataDisplayItem label="Monthly Burn Rate (USD)" value={startupProfile.burn_rate?.toLocaleString()} />
+          <DataDisplayItem label="Total Raised (USD)" value={startupProfile.total_raised?.toLocaleString()} />
+          <DataDisplayItem label="Target Amount (USD)" value={startupProfile.target_amount?.toLocaleString()} />
+          <DataDisplayItem label="Valuation (USD)" value={startupProfile.valuation?.toLocaleString()} />
+          <DataDisplayItem label="Equity Offered (%)" value={startupProfile.equity_percentage_offered} />
+          <DataDisplayItem label="Monthly Burn Rate (USD)" value={startupProfile.burn_rate?.toLocaleString()} />
                 <DataDisplayItem label="Previous Investors" value={startupProfile.previous_investors} />
               </div>
               <div className="border-t pt-6">
-                <DataDisplayItem
-                  label="Planned Use of Funds"
-                  value={startupProfile.planned_use_of_funds}
-                />
+          <DataDisplayItem
+            label="Planned Use of Funds"
+            value={startupProfile.planned_use_of_funds}
+          />
               </div>
-            </CardContent>
-          </Card>
+        </CardContent>
+      </Card>
         </div>
 
         {/* Sidebar - Right Column */}
@@ -361,12 +361,12 @@ export default function StartupProfilePage() {
                 <div className="space-y-1.5">
                   <CardTitle className="flex items-center text-lg sm:text-xl">
                     <Users className="mr-2 h-5 w-5 lg:h-6 lg:w-6 text-primary flex-shrink-0" />
-                    Team Members
-                  </CardTitle>
+              Team Members
+            </CardTitle>
                   <CardDescription className="text-sm text-muted-foreground">
                     Your core team information.
                   </CardDescription>
-                </div>
+          </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -380,39 +380,39 @@ export default function StartupProfilePage() {
                       Pending Review
                     </>
                   ) : (
-                    <Link href={editSectionPath("team")}>
+            <Link href={editSectionPath("team")}>
                       <Edit3 className="mr-1.5 h-3 w-3" />
                       Edit Team
-                    </Link>
+            </Link>
                   )}
-                </Button>
+          </Button>
               </div>
-            </CardHeader>
-            <CardContent>
-              {teamMembers.length > 0 ? (
+        </CardHeader>
+        <CardContent>
+          {teamMembers.length > 0 ? (
                 <div className="space-y-4 lg:space-y-6">
                   {teamMembers.map((member) => (
                     <div key={member.id} className="pb-4 lg:pb-6 border-b border-border/50 last:border-b-0 last:pb-0">
                       <div className="space-y-2">
                         <h4 className="font-semibold text-sm sm:text-base text-foreground">
                           {member.name}
-                        </h4>
+                </h4>
                         <p className="text-xs sm:text-sm text-primary font-medium">{member.role}</p>
                         {member.bio && (
                           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{member.bio}</p>
                         )}
-                        {member.linkedin_url && (
-                          <a
-                            href={member.linkedin_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                {member.linkedin_url && (
+                  <a
+                    href={member.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                             className="text-xs sm:text-sm text-primary hover:underline inline-flex items-center gap-1 mt-2"
-                          >
+                  >
                             <ExternalLink className="h-3 w-3" />
-                            LinkedIn Profile
-                          </a>
-                        )}
-                      </div>
+                    LinkedIn Profile
+                  </a>
+                )}
+              </div>
                     </div>
                   ))}
                 </div>
@@ -424,9 +424,9 @@ export default function StartupProfilePage() {
                     <Link href={editSectionPath("team")}>Add Team Members</Link>
                   </Button>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+          )}
+        </CardContent>
+      </Card>
 
           {/* Enhanced Documents Card */}
           <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
@@ -435,12 +435,12 @@ export default function StartupProfilePage() {
                 <div className="space-y-1.5">
                   <CardTitle className="flex items-center text-lg sm:text-xl">
                     <FileText className="mr-2 h-5 w-5 lg:h-6 lg:w-6 text-primary flex-shrink-0" />
-                    Documents
-                  </CardTitle>
+              Documents
+            </CardTitle>
                   <CardDescription className="text-sm text-muted-foreground">
                     Pitch deck, financials, and other materials.
                   </CardDescription>
-                </div>
+          </div>
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -454,18 +454,18 @@ export default function StartupProfilePage() {
                       Pending Review
                     </>
                   ) : (
-                    <Link href={editSectionPath("documents")}>
+            <Link href={editSectionPath("documents")}>
                       <Edit3 className="mr-1.5 h-3 w-3" />
                       Manage Documents
-                    </Link>
+            </Link>
                   )}
-                </Button>
+          </Button>
               </div>
-            </CardHeader>
-            <CardContent>
-              {documents.length > 0 ? (
+        </CardHeader>
+        <CardContent>
+          {documents.length > 0 ? (
                 <div className="space-y-3 lg:space-y-4">
-                  {documents.map((doc) => (
+              {documents.map((doc) => (
                     <div key={doc.id} className="group p-3 lg:p-4 bg-muted/30 hover:bg-muted/50 rounded-lg border border-border/50 transition-all duration-200">
                       <div className="flex flex-col gap-2">
                         <div className="flex items-center justify-between gap-2">
@@ -473,21 +473,21 @@ export default function StartupProfilePage() {
                             {doc.document_type.replace("_", " ")}
                           </Badge>
                         </div>
-                        <a
-                          href={doc.file_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                  <a
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                           className="hover:underline flex items-center gap-2 group-hover:text-primary transition-colors"
-                        >
+                  >
                           <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                           <span className="text-sm truncate">{doc.file_name}</span>
                           <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </a>
                       </div>
                     </div>
-                  ))}
+              ))}
                 </div>
-              ) : (
+          ) : (
                 <div className="text-center py-6 lg:py-8">
                   <FileText className="h-8 w-8 lg:h-10 lg:w-10 text-muted-foreground mx-auto mb-3" />
                   <p className="text-muted-foreground text-sm">No documents uploaded yet.</p>
@@ -495,9 +495,9 @@ export default function StartupProfilePage() {
                     <Link href={editSectionPath("documents")}>Upload Documents</Link>
                   </Button>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+          )}
+        </CardContent>
+      </Card>
 
           {/* Quick Actions Card */}
           <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
