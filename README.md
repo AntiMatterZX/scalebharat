@@ -1,0 +1,81 @@
+# ScaleBharat
+
+A Next.js application for connecting startups and investors in India.
+
+## Features
+
+- Authentication with Supabase
+- Role-based access control (Admin, Startup, Investor)
+- Matching system between startups and investors
+- Messaging platform
+- Analytics dashboard
+- Onboarding workflows
+
+## Tech Stack
+
+- Next.js
+- TypeScript
+- Supabase for authentication and database
+- Optimized middleware for performance
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 16+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/AntiMatterZX/scalebharat.git
+cd scalebharat
+```
+
+2. Install dependencies
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables
+```bash
+cp .env.example .env.local
+```
+
+4. Run the development server
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+## Deployment
+
+The application is configured for deployment on Vercel or similar platforms.
+
+## Git Configuration
+
+The repository is configured to ignore build artifacts and large files:
+- `.next/` directory and cache files are excluded to prevent GitHub's 100MB file size limit errors
+
+## Performance Optimizations
+
+- Middleware caching for user profiles (5-minute TTL)
+- Static asset request bypassing in middleware
+- Optimized database queries using Promise.all
+- Efficient route handling with mapping functions
+- Cache cleanup to prevent memory leaks
+
+## Security Features
+
+- Role-based access control
+- Protected routes
+- Secure authentication flow
+- Error handling with graceful fallbacks
+
+## License
+
+[MIT](LICENSE)
