@@ -86,3 +86,6 @@ export function createSupabaseServiceRoleClient() {
     },
   })
 }
+
+// Backward compatibility export for old imports
+export const createRouteHandlerClient = createSupabaseServerClient

@@ -1,5 +1,8 @@
 import nodemailer from 'nodemailer'
 
+// Re-export from the index file for backward compatibility
+export { sendEmail, verifyEmailConnection } from './email/index'
+
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: parseInt(process.env.SMTP_PORT || '587'),

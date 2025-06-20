@@ -17,9 +17,6 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     unoptimized: true,
   },
-  experimental: {
-    serverActions: {},
-  },
   // Add security headers
   async headers() {
     return [
