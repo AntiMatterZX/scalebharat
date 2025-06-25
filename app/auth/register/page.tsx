@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
+import * as React from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -16,7 +15,7 @@ import { supabase } from "@/lib/supabase"
 import { cn } from '@/lib/utils'
 import { ProfileValidationModal } from "@/components/ui/profile-validation-modal"
 
-export default function RegisterPage() {
+function RegisterForm() {
   const searchParams = useSearchParams()
   const initialType = searchParams.get("type") || "startup"
 
@@ -443,5 +442,13 @@ export default function RegisterPage() {
         />
       )}
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-primary/10 flex items-center justify-center p-4"><div>Loading...</div></div>}>
+      <RegisterForm />
+    </Suspense>
   )
 }

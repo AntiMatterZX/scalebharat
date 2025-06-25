@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { FiMenu, FiArrowRight, FiX } from "react-icons/fi";
+import { FiArrowRight } from "react-icons/fi";
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { supabase } from '@/lib/supabase';
@@ -33,7 +33,9 @@ import {
   Briefcase,
   PieChart,
   UserCheck,
-  MailIcon
+  MailIcon,
+  Menu,
+  X
 } from 'lucide-react';
 import { NotificationCenter } from '@/components/ui/notifications';
 
@@ -240,7 +242,7 @@ export function Navbar() {
     <nav className="bg-background border-b border-border relative sticky top-0 z-[100] transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <NavLeft setIsOpen={setIsOpen} pathname={pathname} userType={userType} />
+          <NavLeft setIsOpen={setIsOpen} pathname={pathname} userType={userType} isOpen={isOpen} />
           <NavRight 
             user={user} 
             userType={userType}
@@ -293,9 +295,10 @@ interface NavLeftProps {
   setIsOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   pathname: string;
   userType: string | null;
+  isOpen: boolean;
 }
 
-const NavLeft = ({ setIsOpen, pathname, userType }: NavLeftProps) => {
+const NavLeft = ({ setIsOpen, pathname, userType, isOpen }: NavLeftProps) => {
   // Desktop navigation shows public routes for everyone
   const getPublicNavItems = () => {
     return [
@@ -312,10 +315,21 @@ const NavLeft = ({ setIsOpen, pathname, userType }: NavLeftProps) => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="flex items-center justify-center h-10 w-10 lg:hidden text-foreground text-2xl transition-colors duration-300 rounded-md hover:bg-accent"
+        className="flex items-center justify-center h-11 w-11 lg:hidden bg-primary/10 border-2 border-primary/20 hover:bg-primary/20 hover:border-primary/40 transition-all duration-200 rounded-lg shadow-md relative z-10 backdrop-blur-sm"
         onClick={() => setIsOpen((pv) => !pv)}
+        aria-label="Toggle mobile menu"
       >
-        <FiMenu />
+        {isOpen ? (
+          <>
+            <X className="h-6 w-6 text-primary stroke-[3]" />
+            <span className="sr-only">Close</span>
+          </>
+        ) : (
+          <>
+            <Menu className="h-6 w-6 text-primary stroke-[3]" />
+            <span className="sr-only">Menu</span>
+          </>
+        )}
       </motion.button>
       <Logo />
       <div className="hidden lg:flex items-center gap-6 overflow-x-auto">
@@ -398,7 +412,7 @@ const NavRight = ({ user, userType, profileLoading, navigationItems, handleSignO
                     </span>
                   )}
                 </div>
-                <FiMenu className="h-3 w-3 ml-1" />
+                <Menu className="h-3 w-3 ml-1" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72 mt-1" align="end" forceMount>
@@ -551,7 +565,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
             onClick={() => setIsOpen(false)}
             className="h-8 w-8 p-0 hover:bg-accent"
           >
-            <FiX className="h-5 w-5" />
+            <X className="h-5 w-5" />
             <span className="sr-only">Close menu</span>
           </Button>
         </motion.div>
@@ -578,7 +592,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
             transition={{ delay: 0.25, duration: 0.3 }}
           >
             <h3 className="text-sm font-medium text-muted-foreground mb-3 px-2">Navigation</h3>
-            <div className="space-y-1">
+            <div className="space-y-3">
               {publicRoutes.map((route, index) => (
                 <motion.div
                   key={route.href}
@@ -640,7 +654,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
               transition={{ delay: 0.45, duration: 0.3 }}
             >
               <h3 className="text-sm font-medium text-muted-foreground mb-3 px-2">My Dashboard</h3>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {navigationItems.slice(0, 6).map((item, index) => (
                   <motion.div
                     key={item.href}
@@ -690,7 +704,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                 </div>
                     </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2 py-2">
                 <Link href="/auth/login" onClick={() => setIsOpen(false)}>
                   <div className="w-full p-3 rounded-md border border-border bg-background hover:bg-accent transition-colors">
                     <div className="text-sm font-medium">Sign in</div>
