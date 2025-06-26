@@ -23,12 +23,12 @@ function RegisterSelection() {
   useEffect(() => {
     // If a type is specified, redirect to the new onboarding flow
     if (initialType) {
-      router.push(`/auth/onboarding/${initialType}`)
+      router.push(`/onboarding/${initialType}`)
     }
   }, [initialType, router])
 
   const handleSelection = (type: "startup" | "investor") => {
-    router.push(`/auth/onboarding/${type}`)
+    router.push(`/onboarding/${type}`)
   }
 
   return (

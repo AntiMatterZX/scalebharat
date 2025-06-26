@@ -97,15 +97,17 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-primary/10 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md shadow-lg border-border/40">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <Building2 className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold">StartupConnect</span>
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Building2 className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-2xl font-bold text-foreground">ScaleBharat</span>
           </div>
-          <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
+          <CardTitle className="text-foreground">Welcome Back</CardTitle>
+          <CardDescription className="text-muted-foreground">Sign in to your account to continue</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -116,39 +118,39 @@ function LoginForm() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-foreground">Email</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="john@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="pl-10"
+                  className="pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-foreground">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="pl-10"
+                  className="pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground"
                   required
                 />
               </div>
             </div>
 
             <div className="flex items-center justify-between">
-              <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
+              <Link href="/auth/forgot-password" className="text-sm text-primary hover:text-primary/80 hover:underline">
                 Forgot password?
               </Link>
             </div>
@@ -161,10 +163,10 @@ function LoginForm() {
           <div className="mt-4">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
 
@@ -201,8 +203,8 @@ function LoginForm() {
           </div>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-gray-600">Don't have an account? </span>
-            <Link href="/auth/register" className="text-blue-600 hover:underline">
+            <span className="text-muted-foreground">Don't have an account? </span>
+            <Link href="/auth/register" className="text-primary hover:text-primary/80 hover:underline font-medium">
               Sign up
             </Link>
           </div>
@@ -214,7 +216,14 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"><div>Loading...</div></div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-primary/10 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
       <LoginForm />
     </Suspense>
   )
