@@ -499,14 +499,14 @@ const NavRight = ({ user, userType, profileLoading, navigationItems, handleSignO
           </DropdownMenu>
         </div>
       ) : (
-        <div className="hidden lg:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-2 sm:gap-3">
           <Link href="/auth/login">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 h-8 sm:h-9">
               Sign in
             </Button>
           </Link>
           <Link href="/auth/register">
-            <Button size="sm">
+            <Button size="sm" className="text-xs sm:text-sm px-2 sm:px-3 py-1.5 sm:py-2 h-8 sm:h-9">
               Sign up
             </Button>
           </Link>
@@ -580,7 +580,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
           </Button>
         </div>
 
-        <div className="flex flex-col h-full max-h-[calc(100vh-80px)]">
+        <div className="flex flex-col h-full">
            {/* User Profile Section - Only for authenticated users */}
            {user && (
              <motion.div
@@ -614,7 +614,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
            )}
            
            {/* Scrollable Menu Content */}
-           <div className="flex-1 overflow-y-auto py-3 pb-0" style={{ maxHeight: 'calc(100vh - 240px)' }}>
+           <div className="flex-1 overflow-y-auto py-3" style={{ paddingBottom: user ? '120px' : '180px' }}>
                          {/* Public Navigation */}
              <motion.div
                initial={{ opacity: 0, y: 20 }}
@@ -700,8 +700,8 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
             )}
           </div>
           
-                     {/* Bottom Action Section - Always visible at bottom */}
-           <div className="border-t border-border/30 p-2 sm:p-4 bg-accent/5 flex-shrink-0 mt-auto">
+                     {/* Bottom Action Section - Fixed at bottom */}
+           <div className="absolute bottom-0 left-0 right-0 border-t border-border/30 p-3 sm:p-4 bg-background/95 backdrop-blur-sm flex-shrink-0" style={{ paddingBottom: 'max(4rem, calc(env(safe-area-inset-bottom) + 2rem))' }}>
              {user ? (
                <motion.div
                  initial={{ opacity: 0, y: 20 }}
@@ -710,7 +710,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                >
                  <button
                    onClick={handleSignOut}
-                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all duration-200 group"
+                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-all duration-200 group border border-destructive/20 hover:border-destructive/40"
                  >
                    <FiArrowRight className="h-4 w-4 rotate-180 group-hover:scale-110 transition-transform" />
                    <span>Sign Out</span>
@@ -721,19 +721,19 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ delay: 0.2, duration: 0.3 }}
-                 className="flex flex-col gap-3"
+                 className="flex flex-col gap-3 mb-4"
                >
                  <Link href="/auth/login" onClick={() => setIsOpen(false)} className="block">
                    <Button 
                      variant="outline" 
-                     className="w-full h-11 text-sm font-medium hover:bg-accent/80 transition-all duration-200"
+                     className="w-full h-11 text-sm font-medium hover:bg-accent/80 transition-all duration-200 border-border/60 mb-2"
                    >
                      Sign In
                    </Button>
                  </Link>
                  <Link href="/auth/register" onClick={() => setIsOpen(false)} className="block">
                    <Button 
-                     className="w-full h-11 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-md"
+                     className="w-full h-11 text-sm font-medium bg-emerald-500 text-black hover:bg-emerald-600 transition-all duration-200 shadow-md"
                    >
                      Get Started
                    </Button>

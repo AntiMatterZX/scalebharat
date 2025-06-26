@@ -23,23 +23,23 @@ const Hero = () => {
           </h1>
 
           {/* Description */}
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8 lg:mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 lg:mb-10 max-w-xl mx-auto leading-relaxed">
             ScaleBharat is the modern platform connecting innovative startups with the right investors. 
             Real-time matching, AI-powered recommendations, and seamless funding workflows to help 
             your startup reach millions.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-16 sm:mb-20 lg:mb-24 max-w-md mx-auto">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-16 sm:mb-20 lg:mb-24 px-4">
             <Link href="/onboarding" className="w-full sm:w-auto">
-              <Button className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-black font-semibold py-5 px-6 text-sm rounded-lg transition-all duration-300 hover:scale-[1.02]">
+              <Button className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-black font-medium py-2.5 px-5 text-sm rounded-lg transition-all duration-300 hover:scale-[1.02] min-h-[2.75rem]">
                 Start your journey
               </Button>
             </Link>
             <Link href="/investors" className="w-full sm:w-auto">
               <Button 
                 variant="outline" 
-                className="w-full sm:w-auto font-semibold py-5 px-6 text-sm rounded-lg transition-all duration-300"
+                className="w-full sm:w-auto font-medium py-2.5 px-5 text-sm rounded-lg transition-all duration-300 min-h-[2.75rem]"
               >
                 Browse investors
               </Button>
