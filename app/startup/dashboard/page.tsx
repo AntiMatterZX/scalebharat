@@ -475,30 +475,27 @@ export default function StartupDashboardPage() {
       {/* Enhanced Mobile-First Tabs */}
       <Tabs defaultValue="activity" className="w-full">
         <div className="overflow-x-auto scrollbar-hide pb-2">
-          <TabsList className="w-full sm:w-auto inline-flex h-12 items-center justify-center rounded-xl bg-muted p-1 text-muted-foreground gap-1">
+          <TabsList className="inline-flex h-12 items-center justify-center rounded-xl bg-muted/50 p-1 text-muted-foreground gap-1 min-w-fit">
             <TabsTrigger 
               value="activity" 
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-[90px] flex-1 sm:flex-initial"
             >
-              <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Activity</span>
-              <span className="xs:hidden">Act</span>
+              <Activity className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Activity</span>
             </TabsTrigger>
             <TabsTrigger 
               value="matches" 
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-[90px] flex-1 sm:flex-initial"
             >
-              <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Matches</span>
-              <span className="xs:hidden">Mat</span>
+              <Users className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Matches</span>
             </TabsTrigger>
             <TabsTrigger 
               value="messages" 
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-[90px] flex-1 sm:flex-initial"
             >
-              <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Messages</span>
-              <span className="xs:hidden">Msg</span>
+              <MessageSquare className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Messages</span>
             </TabsTrigger>
           </TabsList>
         </div>

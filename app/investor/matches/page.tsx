@@ -317,7 +317,8 @@ export default function InvestorMatchesPage() {
               className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
             >
               <Building2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">All</span>
+              <span className="hidden sm:inline">All Matches</span>
+              <span className="sm:hidden">All</span>
               <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs h-5">
                 {matches.length}
               </Badge>
@@ -328,8 +329,8 @@ export default function InvestorMatchesPage() {
               className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
             >
               <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Pending</span>
-              <span className="xs:hidden">Pend</span>
+              <span className="hidden sm:inline">Pending</span>
+              <span className="sm:hidden">Pending</span>
               <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs h-5">
                 {matches.filter((m) => m.status === "pending").length}
               </Badge>
@@ -340,8 +341,8 @@ export default function InvestorMatchesPage() {
               className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
             >
               <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Interested</span>
-              <span className="xs:hidden">Int</span>
+              <span className="hidden sm:inline">Interested</span>
+              <span className="sm:hidden">Interest</span>
               <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs h-5">
                 {matches.filter((m) => m.status === "interested").length}
               </Badge>
@@ -352,8 +353,8 @@ export default function InvestorMatchesPage() {
               className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
             >
               <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Meetings</span>
-              <span className="xs:hidden">Meet</span>
+              <span className="hidden sm:inline">Meetings</span>
+              <span className="sm:hidden">Meetings</span>
               <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs h-5">
                 {matches.filter((m) => m.status === "meeting-scheduled").length}
               </Badge>
@@ -364,8 +365,8 @@ export default function InvestorMatchesPage() {
               className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-2 text-xs sm:text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md hover:bg-background/50 min-w-fit"
             >
               <ThumbsDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-              <span className="hidden xs:inline">Passed</span>
-              <span className="xs:hidden">Pass</span>
+              <span className="hidden sm:inline">Passed</span>
+              <span className="sm:hidden">Passed</span>
               <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs h-5">
                 {matches.filter((m) => m.status === "not-interested").length}
               </Badge>

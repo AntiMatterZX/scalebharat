@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase"
 import { AlertCircle, ArrowRight, Building2, Users } from "lucide-react"
 import Link from "next/link"
 import { Progress } from "@/components/ui/progress"
-import type { Database } from "@/types/database" // Ensure this path is correct
+import type { Database } from "@/types/database"
 
 export default function DashboardPage() {
   const { user, session, isLoading: userLoading } = useUser()
@@ -160,8 +160,8 @@ export default function DashboardPage() {
         {
           name: "Investment Preferences",
           completed: !!(
-            iData.investment_stages?.length > 0 &&
-            iData.investment_industries?.length > 0 &&
+            iData.investment_stages?.length &&
+            iData.investment_industries?.length &&
             iData.check_size_min !== null &&
             iData.check_size_max !== null
           ),
@@ -170,7 +170,7 @@ export default function DashboardPage() {
         // Portfolio and Verification would also need specific checks, potentially against other tables or specific fields.
         {
           name: "Portfolio",
-          completed: !!(iData.investment_stages?.length > 0),
+          completed: !!(iData.investment_stages?.length),
           url: "/onboarding/investor/portfolio",
         }, // Placeholder logic
         { name: "Verification", completed: false, url: "/onboarding/investor/verification" }, // Placeholder logic, verification is often a manual or document-based step

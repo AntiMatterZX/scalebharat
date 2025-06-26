@@ -5,21 +5,23 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-      <footer className="bg-gray-900 dark:bg-black text-white dark:text-zinc-200 py-12 px-4 border-t border-gray-800 dark:border-gray-800 shadow-inner transition-all duration-300">
+      <footer className="bg-muted/30 border-t border-border py-12 px-4 shadow-inner transition-all duration-300">
         <div className="container mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Building2 className="h-6 w-6" />
-                <span className="text-lg font-bold">StartupConnect</span>
+                <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center">
+                  <Building2 className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <span className="text-lg font-bold text-foreground">ScaleBharat</span>
               </div>
-              <p className="text-gray-400 dark:text-gray-400">
+              <p className="text-muted-foreground">
                 Connecting innovation with investment opportunities worldwide.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Platform</h3>
-              <ul className="space-y-2 text-gray-400 dark:text-gray-400">
+              <h3 className="font-semibold mb-4 text-foreground">Platform</h3>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
                   <Link href="/startups" className="hover:text-primary transition-colors duration-200">Browse Startups</Link>
                 </li>
@@ -32,8 +34,8 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Support</h3>
-              <ul className="space-y-2 text-gray-400 dark:text-gray-400">
+              <h3 className="font-semibold mb-4 text-foreground">Support</h3>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
                   <Link href="/help" className="hover:text-primary transition-colors duration-200">Help Center</Link>
                 </li>
@@ -46,8 +48,8 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-gray-400 dark:text-gray-400">
+              <h3 className="font-semibold mb-4 text-foreground">Company</h3>
+              <ul className="space-y-2 text-muted-foreground">
                 <li>
                   <Link href="/about" className="hover:text-primary transition-colors duration-200">About Us</Link>
                 </li>
@@ -60,8 +62,8 @@ const Footer = () => {
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 dark:border-gray-800 mt-8 pt-8 text-center text-gray-400 dark:text-gray-500">
-            <p>&copy; 2024 StartupConnect. All rights reserved.</p>
+          <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
+            <p>&copy; 2024 ScaleBharat. All rights reserved.</p>
           </div>
         </div>
       </footer>

@@ -614,7 +614,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
            )}
            
            {/* Scrollable Menu Content */}
-           <div className="flex-1 overflow-y-auto py-3" style={{ paddingBottom: user ? '120px' : '180px' }}>
+           <div className="flex-1 overflow-y-auto py-3" style={{ paddingBottom: user ? '160px' : '180px' }}>
                          {/* Public Navigation */}
              <motion.div
                initial={{ opacity: 0, y: 20 }}
@@ -660,7 +660,7 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
                >
                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Dashboard</h3>
                 <div className="space-y-1">
-                  {navigationItems.slice(0, 8).map((item, index) => (
+                  {navigationItems.filter(item => item.name !== "Settings").map((item, index) => (
                     <motion.div
                       key={item.href}
                       initial={{ opacity: 0, x: 20 }}
@@ -700,6 +700,55 @@ const NavMenu = ({ isOpen, user, userType, profileLoading, navigationItems, hand
             )}
           </div>
           
+          {/* Settings Section - Only for authenticated users */}
+          {user && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+              className="px-4 mb-4"
+            >
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Account</h3>
+              <div className="space-y-1">
+                {navigationItems.filter(item => item.name === "Settings").map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.45, duration: 0.3 }}
+                  >
+                    <Link href={item.href} onClick={() => setIsOpen(false)}>
+                      <div 
+                        className={`group flex items-center gap-3 px-2 py-2 sm:px-3 sm:py-2.5 rounded-lg text-sm transition-all duration-200 ${
+                          item.href === pathname 
+                            ? "bg-primary text-primary-foreground shadow-md" 
+                            : "text-foreground hover:bg-accent/80 hover:text-accent-foreground"
+                        }`}
+                      >
+                        <item.icon className={`h-5 w-5 flex-shrink-0 ${
+                          item.href === pathname ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-accent-foreground'
+                        }`} />
+                        <div className="flex-1 min-w-0">
+                          <div className={`font-medium ${item.href === pathname ? 'text-primary-foreground' : 'text-foreground'}`}>
+                            {item.name}
+                          </div>
+                          {item.description && (
+                            <div className={`text-xs ${item.href === pathname ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                              {item.description}
+                            </div>
+                          )}
+                        </div>
+                        {item.href === pathname && (
+                          <div className="w-2 h-2 bg-primary-foreground rounded-full" />
+                        )}
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
                      {/* Bottom Action Section - Fixed at bottom */}
            <div className="absolute bottom-0 left-0 right-0 border-t border-border/30 p-3 sm:p-4 bg-background/95 backdrop-blur-sm flex-shrink-0" style={{ paddingBottom: 'max(4rem, calc(env(safe-area-inset-bottom) + 2rem))' }}>
              {user ? (
