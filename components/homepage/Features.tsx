@@ -78,8 +78,8 @@ const Features = () => {
   ]
 
   return (
-    <section className="section-padding bg-white dark:bg-gray-900">
-      <div className="container-fluid">
+    <section className="py-12 sm:py-16 lg:py-20 bg-background dark:bg-background px-2 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16 animate-fade-in">
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary/10 rounded-full mb-4 sm:mb-6">
@@ -94,7 +94,7 @@ const Features = () => {
             <span className="text-gradient"> succeed</span>
           </h2>
           
-          <p className="text-base sm:text-lg md:text-xl leading-relaxed text-muted-foreground max-w-3xl mx-auto px-4">
+          <p className="text-base sm:text-lg md:text-xl leading-relaxed text-muted-foreground max-w-3xl mx-auto">
             Our platform provides all the tools and resources you need to connect, 
             communicate, and close funding deals efficiently.
           </p>

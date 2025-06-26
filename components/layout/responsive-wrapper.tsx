@@ -30,9 +30,9 @@ export function ResponsiveWrapper({
 
   const paddingClasses = {
     none: '',
-    sm: 'px-4 py-2',
-    md: 'px-4 sm:px-6 lg:px-8 py-4',
-    lg: 'px-4 sm:px-6 lg:px-8 py-8'
+    sm: 'px-2 py-1 sm:px-4 sm:py-2',
+    md: 'px-2 py-2 sm:px-6 lg:px-8 sm:py-4',
+    lg: 'px-2 py-4 sm:px-6 lg:px-8 sm:py-8'
   }
 
   return (
@@ -103,7 +103,7 @@ interface DashboardContainerProps {
 export function DashboardContainer({ children, className }: DashboardContainerProps) {
   return (
     <div className={cn(
-      'min-h-screen bg-gray-50/50 dark:bg-gray-950/50',
+      'min-h-screen',
       className
     )}>
       <ResponsiveWrapper padding="lg">

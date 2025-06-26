@@ -102,7 +102,7 @@ export default function StartupsPage() {
         </div>
 
         {/* Filters */}
-        <Card className="mb-8 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-0 shadow-xl">
+        <Card className="mb-8 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-0 shadow-xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Filter className="h-5 w-5 text-blue-600" />
@@ -119,7 +119,7 @@ export default function StartupsPage() {
                     placeholder="Search startups..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-white/50 dark:bg-slate-700/50"
+                    className="pl-10 bg-white/50 dark:bg-gray-900/50"
                   />
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function StartupsPage() {
 
         {filteredStartups.length === 0 && (
           <div className="text-center py-20">
-            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 max-w-md mx-auto border-0">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-3xl shadow-xl p-12 max-w-md mx-auto border-0">
               <Building2 className="h-16 w-16 text-blue-500 mx-auto mb-6" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">No startups found</h3>
               <p className="text-gray-600 dark:text-gray-400 leading-relaxed">

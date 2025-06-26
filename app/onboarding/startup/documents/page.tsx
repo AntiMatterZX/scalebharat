@@ -215,7 +215,7 @@ export default function StartupDocumentsPage() {
       <div>
         <Label className="text-base">{label}</Label>
         {currentDoc ? (
-          <div className="mt-2 p-3 border rounded-md flex items-center justify-between bg-gray-50 dark:bg-gray-700">
+                        <div className="mt-2 p-3 border rounded-md flex items-center justify-between bg-gray-50 dark:bg-black/50">
             <div className="flex items-center">
               <FileText className="h-5 w-5 mr-2 text-primary" />
               <a href={currentDoc.url} target="_blank" rel="noopener noreferrer" className="hover:underline">

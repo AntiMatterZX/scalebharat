@@ -75,7 +75,7 @@ export const Startup3DCard = ({ startup }: Startup3DCardProps) => {
       </div>
       
       {/* Sleek Wrapper Card */}
-      <div className="relative bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 dark:border-slate-700/50 transition-all duration-500 group-hover:shadow-3xl group-hover:shadow-blue-500/10 dark:group-hover:shadow-blue-400/20 group-hover:scale-[1.02] group-hover:-translate-y-2">
+        <div className="relative bg-white/95 dark:bg-black/95 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl group-hover:shadow-blue-500/10 dark:group-hover:shadow-blue-400/20 group-hover:scale-[1.02] group-hover:-translate-y-2">
         <motion.div whileHover="hovered" className="cursor-pointer">
           <StartupScreenMock startup={startup} />
           <StartupCardCopy startup={startup} formatCurrency={formatCurrency} />
@@ -110,7 +110,7 @@ export const Investor3DCard = ({ investor }: Investor3DCardProps) => {
       </div>
       
       {/* Sleek Wrapper Card */}
-      <div className="relative bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 dark:border-slate-700/50 transition-all duration-500 group-hover:shadow-3xl group-hover:shadow-green-500/10 dark:group-hover:shadow-green-400/20 group-hover:scale-[1.02] group-hover:-translate-y-2">
+        <div className="relative bg-white/95 dark:bg-black/95 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 dark:border-gray-800/50 transition-all duration-500 group-hover:shadow-3xl group-hover:shadow-green-500/10 dark:group-hover:shadow-green-400/20 group-hover:scale-[1.02] group-hover:-translate-y-2">
         <motion.div whileHover="hovered" className="cursor-pointer">
           <InvestorScreenMock investor={investor} />
           <InvestorCardCopy investor={investor} formatCurrency={formatCurrency} />
@@ -141,7 +141,7 @@ const StartupScreenMock = ({ startup }: { startup: Startup3DCardProps['startup']
       {/* Main Card Container */}
       <div
         style={{ transform: "translateZ(80px)", transformStyle: "preserve-3d" }}
-        className="w-full h-full bg-white dark:bg-slate-900 rounded-xl shadow-lg p-6 relative overflow-hidden"
+        className="w-full h-full bg-white dark:bg-black rounded-xl shadow-lg p-6 relative overflow-hidden"
       >
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
@@ -256,7 +256,7 @@ const InvestorScreenMock = ({ investor }: { investor: Investor3DCardProps['inves
       {/* Main Card Container */}
       <div
         style={{ transform: "translateZ(80px)", transformStyle: "preserve-3d" }}
-        className="w-full h-full bg-white dark:bg-slate-900 rounded-xl shadow-lg p-6 relative overflow-hidden"
+        className="w-full h-full bg-white dark:bg-black rounded-xl shadow-lg p-6 relative overflow-hidden"
       >
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">

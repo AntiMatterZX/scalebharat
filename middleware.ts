@@ -16,6 +16,7 @@ export async function middleware(request: NextRequest) {
     "/",
     "/auth/login",
     "/auth/register",
+    "/auth/onboarding",
     "/auth/forgot-password",
     "/auth/reset-password",
     "/auth/callback",
@@ -100,7 +101,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // If user has no profile and is not on onboarding page, redirect to onboarding
-    if (!startup && !investor && !isAdmin && !request.nextUrl.pathname.startsWith("/onboarding") && !isPublicPath) {
+    if (!startup && !investor && !isAdmin && !request.nextUrl.pathname.startsWith("/onboarding") && !request.nextUrl.pathname.startsWith("/auth/onboarding") && !isPublicPath) {
       return NextResponse.redirect(new URL("/onboarding", request.url))
     }
 
@@ -109,6 +110,7 @@ export async function middleware(request: NextRequest) {
       startup &&
       startup.status === "pending" &&
       !request.nextUrl.pathname.startsWith("/onboarding/startup") &&
+      !request.nextUrl.pathname.startsWith("/auth/onboarding") &&
       !isPublicPath
     ) {
       return NextResponse.redirect(new URL("/onboarding/startup", request.url))
@@ -119,6 +121,7 @@ export async function middleware(request: NextRequest) {
       investor &&
       investor.status === "pending" &&
       !request.nextUrl.pathname.startsWith("/onboarding/investor") &&
+      !request.nextUrl.pathname.startsWith("/auth/onboarding") &&
       !isPublicPath
     ) {
       return NextResponse.redirect(new URL("/onboarding/investor", request.url))

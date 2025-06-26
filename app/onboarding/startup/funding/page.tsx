@@ -380,7 +380,7 @@ export default function StartupFundingPage() {
                     </TooltipContent>
                   </Tooltip>
                 </Label>
-                <Input value={runwayMonths} readOnly className="bg-gray-100 dark:bg-gray-700" />
+                                  <Input value={runwayMonths} readOnly className="bg-gray-100 dark:bg-black/50" />
               </div>
             </div>
           </div>

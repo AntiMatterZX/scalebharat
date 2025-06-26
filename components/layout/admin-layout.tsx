@@ -252,8 +252,8 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
               className={cn(
                 "w-full flex items-center justify-between px-4 py-2 text-sm font-medium rounded-md transition-colors",
                 pathname.startsWith(item.href)
-                  ? "bg-primary-50 text-primary-700 dark:bg-gray-700 dark:text-white"
-                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
+                  ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-white"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900/50",
               )}
             >
               <div className="flex items-center">
@@ -276,9 +276,9 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
             href={item.href}
             className={cn(
               "flex items-center px-4 py-2 text-sm font-medium rounded-md transition-colors",
-              pathname === item.href
-                ? "bg-primary-50 text-primary-700 dark:bg-gray-700 dark:text-white"
-                : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700",
+                              pathname === item.href
+                  ? "bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-white"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900/50",
             )}
           >
             {item.icon}
@@ -340,7 +340,7 @@ export function AdminLayout({ children, type }: AdminLayoutProps) {
 
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 transition-transform duration-300 ease-in-out transform md:hidden",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-black transition-transform duration-300 ease-in-out transform md:hidden",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >

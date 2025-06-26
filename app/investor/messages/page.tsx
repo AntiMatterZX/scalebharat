@@ -251,7 +251,7 @@ export default function InvestorMessagesPage() {
                   <div
                     key={conversation.id}
                     className={`p-4 border-b cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                      activeConversation?.id === conversation.id ? "bg-gray-50 dark:bg-gray-800" : ""
+                      activeConversation?.id === conversation.id ? "bg-gray-50 dark:bg-gray-900/50" : ""
                     }`}
                     onClick={() => setActiveConversation(conversation)}
                   >
@@ -322,7 +322,7 @@ export default function InvestorMessagesPage() {
                       >
                         <div
                           className={`max-w-[70%] rounded-lg p-3 ${
-                            message.sender_id === user!.id ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-800"
+                            message.sender_id === user!.id ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-900/50"
                           }`}
                         >
                           <p>{message.content}</p>

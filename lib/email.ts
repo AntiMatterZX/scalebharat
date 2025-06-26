@@ -186,4 +186,26 @@ export const sendMeetingEmail = async (
     console.error('Email sending failed:', error)
     return { success: false, error }
   }
+}
+
+// General email sending function
+export const sendEmail = async (
+  to: string,
+  subject: string,
+  html: string,
+  from?: string
+) => {
+  try {
+    await transporter.sendMail({
+      from: from || `"StartupConnect" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html,
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.error('Email sending failed:', error)
+    return { success: false, error }
+  }
 } 

@@ -18,9 +18,9 @@ export function MainLayout({ children }: MainLayoutProps) {
                           pathname?.startsWith('/superadmin/')
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 relative">
+      <main className="flex-1">
         {children}
       </main>
       {!isDashboardPage && <Footer />}

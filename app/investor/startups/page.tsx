@@ -698,7 +698,7 @@ export default function InvestorStartupsPage() {
               <Card key={startup.id} className="overflow-hidden">
                 <CardContent className="p-0">
                   <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/4 p-6 bg-gray-50 dark:bg-gray-800 flex flex-col">
+                    <div className="md:w-1/4 p-6 bg-gray-50 dark:bg-black flex flex-col">
                       <div className="flex items-center mb-4">
                         <Avatar className="h-16 w-16">
                           <AvatarImage src={startup.logo || "/placeholder.svg"} alt={startup.company_name} />

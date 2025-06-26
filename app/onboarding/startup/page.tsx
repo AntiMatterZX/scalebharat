@@ -305,7 +305,7 @@ export default function StartupBasicInfoPage() {
             <div className="flex-1">
               <label
                 htmlFor="logo-upload"
-                className="flex items-center justify-center w-full h-11 px-4 transition bg-background dark:bg-gray-800 border border-input dark:border-gray-600 rounded-md cursor-pointer hover:bg-accent dark:hover:bg-gray-700"
+                className="flex items-center justify-center w-full h-11 px-4 transition bg-background dark:bg-black/50 border border-input dark:border-gray-600 rounded-md cursor-pointer hover:bg-accent dark:hover:bg-gray-900/50"
               >
                 <Upload className="w-5 h-5 mr-2 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Upload logo</span>

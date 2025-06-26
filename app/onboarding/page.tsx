@@ -155,7 +155,7 @@ export default function OnboardingPage() {
       <div className="container-fluid max-w-6xl">
         {/* Enhanced Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full border border-gray-200 dark:border-gray-700 mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-full border border-gray-200 dark:border-gray-700 mb-6">
             <Rocket className="h-4 w-4 text-blue-500" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Join the startup ecosystem
@@ -179,10 +179,9 @@ export default function OnboardingPage() {
         {/* Enhanced Profile Selection Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* Startup Card */}
-          <button
-            type="button"
+          <div
             className={cn(
-              "w-full text-left",
+              "w-full text-left cursor-pointer",
               "card-interactive group relative overflow-hidden",
               "border rounded-xl p-0 bg-card transition-all duration-300",
               selectedType === "startup"
@@ -253,13 +252,12 @@ export default function OnboardingPage() {
               </Button>
             </CardContent>
             </Card>
-          </button>
+          </div>
 
           {/* Investor Card */}
-          <button
-            type="button"
+          <div
             className={cn(
-              "w-full text-left",
+              "w-full text-left cursor-pointer",
               "card-interactive group relative overflow-hidden",
               "border rounded-xl p-0 bg-card transition-all duration-300",
               selectedType === "investor"
@@ -330,7 +328,7 @@ export default function OnboardingPage() {
               </Button>
             </CardContent>
             </Card>
-          </button>
+          </div>
         </div>
 
         {/* Additional Information */}
